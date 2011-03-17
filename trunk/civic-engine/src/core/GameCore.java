@@ -3,6 +3,7 @@
 package core;
 
 import core.events.EventHandler;
+import java.awt.Point;
 
 public class GameCore implements Runnable {
 
@@ -12,18 +13,17 @@ public class GameCore implements Runnable {
     public static final int PAUSE = 2;
     public static final int RESTART = 3;
 
-    public static GameCore gameCore;
+    public static GameCore gameCore = null;
 
     private Thread thread = new Thread(this);
     private int state = 0;
 
+    private Actor[] actors;
+
     public GameCore(){
         initialize();
         thread.start();
-    }
-
-    public static void main(String[] args) {
-        gameCore = new GameCore();
+        gameCore = this;
     }
 
     public void initialize(){
@@ -34,14 +34,16 @@ public class GameCore implements Runnable {
         this.state = state;
     }
 
+    public int getState(){
+        return state;
+    }
+
     public void run() {
 
         while(state != STOP && state != RESTART){
             if(state != PAUSE && state == RUN){
 
                 EventHandler.handleEvents();
-
-                
 
                 // try rendering
                 try{
