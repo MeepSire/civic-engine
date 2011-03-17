@@ -15,7 +15,6 @@ public class TCPClient {
     public TCPClient(String host, int port) throws UnknownHostException, IOException{
 
         socket = new Socket(host, port);
-        out = new PrintWriter(socket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
     }
@@ -24,7 +23,8 @@ public class TCPClient {
         return in.readLine();
     }
 
-    public void sendMessage(String msg) throws IOException{
+    public void sendMessage(String msg) throws IOException {
+        out = new PrintWriter(socket.getOutputStream(), true);
         out.println(msg);
     }
 
