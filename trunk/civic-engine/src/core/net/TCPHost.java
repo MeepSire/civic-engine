@@ -22,7 +22,6 @@ public class TCPHost extends Thread {
     public void acceptConnection() throws IOException{
         clientSocket = socket.accept();
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
         connected = true;
     }
     
@@ -31,6 +30,7 @@ public class TCPHost extends Thread {
     }
     
     public void sendMessage(String msg) throws IOException{
+        out = new PrintWriter(clientSocket.getOutputStream(), true);
         out.println(msg);
     }
     

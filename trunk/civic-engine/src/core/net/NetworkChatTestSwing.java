@@ -113,23 +113,24 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
 
     private void SendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendButtonActionPerformed
         if(isHost){
+            chatText += nickName + ": " + jTextField1.getText() + "\n";
+            TextArea.setText(chatText);
             try {
                 host.sendMessage(nickName + ": " + jTextField1.getText());
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
-            chatText += nickName + ": " + jTextField1.getText() + "\n";
-            TextArea.setText(chatText);
+            
             jTextField1.setText("");
         }
         else{
+            chatText += nickName + ": " + jTextField1.getText() + "\n";
+            TextArea.setText(chatText);
             try {
                 client.sendMessage(nickName + ": " + jTextField1.getText());
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
-            chatText += nickName + ": " + jTextField1.getText() + "\n";
-            TextArea.setText(chatText);
             jTextField1.setText("");
         }
         System.out.println(chatText);
@@ -187,12 +188,18 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             while(true){
                 try {
                     if(NetworkChatTestSwing.isHost){
-                        NetworkChatTestSwing.chatText += host.recieveMessage() + "\n";
+                        String str = host.recieveMessage();
+                        if(str != null){
+                            NetworkChatTestSwing.chatText += str + "\n";
+                        }
                         TextArea.setText(NetworkChatTestSwing.chatText);
                         System.out.println(NetworkChatTestSwing.chatText);
                     }
                     else{
-                        NetworkChatTestSwing.chatText += client.recieveMessage() + "\n";
+                        String str = client.recieveMessage();
+                        if(str != null){
+                            NetworkChatTestSwing.chatText += str + "\n";
+                        }
                         TextArea.setText(NetworkChatTestSwing.chatText);
                         System.out.println(NetworkChatTestSwing.chatText);
                     }
