@@ -27,11 +27,8 @@ public class NetworkTestChat {
 
             System.out.println("Connection established!");
 
-            String nickName = OOUtil.readString("Nickname: ");
-
             while(true){
-                host.sendMessage(nickName + ": " + OOUtil.readString());
-                host.recieveMessage();
+                System.out.println(host.recieveMessage());
             }
 
         }
@@ -44,7 +41,6 @@ public class NetworkTestChat {
 
             while(true){
                 client.sendMessage(nickName + ": " + OOUtil.readString());
-                client.recieveMessage();
             }
         }
 

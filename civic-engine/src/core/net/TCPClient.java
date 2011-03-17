@@ -9,13 +9,13 @@ public class TCPClient {
 
     private Socket socket;
 
-    private DataOutputStream out;
+    private PrintWriter out;
     private BufferedReader in;
 
     public TCPClient(String host, int port) throws UnknownHostException, IOException{
 
         socket = new Socket(host, port);
-        out = new DataOutputStream(socket.getOutputStream());
+        out = new PrintWriter(socket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
     }
@@ -25,7 +25,7 @@ public class TCPClient {
     }
 
     public void sendMessage(String msg) throws IOException{
-        out.writeBytes(msg);
+        out.println(msg);
     }
 
 }
