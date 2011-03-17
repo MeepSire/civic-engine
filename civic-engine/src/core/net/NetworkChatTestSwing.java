@@ -29,6 +29,7 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
 
     public NetworkChatTestSwing() {
         initComponents();
+        new Reciever();
     }
 
     /** This method is called from within the constructor to
@@ -107,6 +108,7 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
         if(evt.getKeyCode() == 32){
             SendButtonActionPerformed(null);
         }
+        System.out.println(evt.getKeyCode());
     }//GEN-LAST:event_jTextField1KeyPressed
 
     private void SendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendButtonActionPerformed
@@ -116,7 +118,7 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
-            TextArea.setText(TextArea.getText() + jTextField1.getText() + "\n");
+            TextArea.setText(TextArea.getText() + nickName + ": " + jTextField1.getText() + "\n");
             jTextField1.setText("");
         }
         else{
@@ -125,7 +127,7 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
-            TextArea.setText(TextArea.getText() + jTextField1.getText() + "\n");
+            TextArea.setText(TextArea.getText() + nickName + ": " + jTextField1.getText() + "\n");
             jTextField1.setText("");
         }
     }//GEN-LAST:event_SendButtonActionPerformed
@@ -163,7 +165,7 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
         
         System.out.println("Connection established!");
         nickName = OOUtil.readString("Nickname: ");
-        
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new NetworkChatTestSwing().setVisible(true);
@@ -181,7 +183,12 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
         public void run() {
             while(true){
                 try {
-                    TextArea.setText(TextArea.getText() + host.recieveMessage() + "\n");
+                    if(NetworkChatTestSwing.isHost){
+                        TextArea.setText(TextArea.getText() + host.recieveMessage() + "\n");
+                    }
+                    else{
+                        TextArea.setText(TextArea.getText() + client.recieveMessage() + "\n");
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
                 }
