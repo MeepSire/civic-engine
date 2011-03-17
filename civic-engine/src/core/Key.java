@@ -11,6 +11,7 @@ public class Key {
     public static final Key DOWN = new Key(35);
 
     private int keyCode;
+    private boolean state = false;
 
     public Key(int UnicodeKeyCode){
         this.keyCode = UnicodeKeyCode;
@@ -18,6 +19,14 @@ public class Key {
 
     public int getKeyCode(){
         return keyCode;
+    }
+
+    public void setState(boolean state){
+        this.state = state;
+    }
+
+    public boolean getState(){
+        return state;
     }
 
 }

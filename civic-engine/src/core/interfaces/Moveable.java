@@ -6,4 +6,6 @@ public interface Moveable {
 
     public void setPosition(Point destination);
 
+    public Point getPosition();
+
 }

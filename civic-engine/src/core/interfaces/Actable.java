@@ -7,5 +7,6 @@ import core.Key;
 public interface Actable {
 
     public void act(Key key);
+    public Key[] getKeys();
 
 }
