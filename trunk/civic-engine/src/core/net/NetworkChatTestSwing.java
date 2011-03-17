@@ -43,25 +43,25 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
     private void initComponents() {
 
         ScrollPane = new javax.swing.JScrollPane();
-        TextArea = new javax.swing.JTextArea();
-        jTextField1 = new javax.swing.JTextField();
+        textArea = new javax.swing.JTextArea();
+        textField = new javax.swing.JTextField();
         SendButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        TextArea.setColumns(20);
-        TextArea.setEditable(false);
-        TextArea.setRows(5);
-        ScrollPane.setViewportView(TextArea);
+        textArea.setColumns(20);
+        textArea.setEditable(false);
+        textArea.setRows(5);
+        ScrollPane.setViewportView(textArea);
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        textField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                textFieldActionPerformed(evt);
             }
         });
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        textField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField1KeyPressed(evt);
+                textFieldKeyPressed(evt);
             }
         });
 
@@ -79,59 +79,57 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(ScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
-                        .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 378, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(textField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(SendButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
-                    .add(ScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE))
+                        .add(SendButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(ScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 285, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(SendButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
-                    .add(jTextField1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, SendButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, textField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void textFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_textFieldActionPerformed
 
-    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
+    private void textFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldKeyPressed
         if(evt.getKeyCode() == 10){
             SendButtonActionPerformed(null);
         }
-    }//GEN-LAST:event_jTextField1KeyPressed
+    }//GEN-LAST:event_textFieldKeyPressed
 
     private void SendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendButtonActionPerformed
         if(isHost){
-            chatText += nickName + ": " + jTextField1.getText() + "\n";
-            TextArea.setText(chatText);
+            chatText += nickName + ": " + textField.getText() + "\n";
+            textArea.setText(chatText);
             try {
-                host.sendMessage(nickName + ": " + jTextField1.getText());
+                host.sendMessage(nickName + ": " + textField.getText());
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            jTextField1.setText("");
+            textField.setText("");
         }
         else{
-            chatText += nickName + ": " + jTextField1.getText() + "\n";
-            TextArea.setText(chatText);
             try {
-                client.sendMessage(nickName + ": " + jTextField1.getText());
+                client.sendMessage(nickName + ": " + textField.getText());
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
-            jTextField1.setText("");
+            textField.setText("");
         }
         System.out.println(chatText);
     }//GEN-LAST:event_SendButtonActionPerformed
@@ -188,11 +186,15 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             while(true){
                 try {
                     if(NetworkChatTestSwing.isHost){
-                        String str = host.recieveMessage();
-                        if(str != null){
-                            NetworkChatTestSwing.chatText += str + "\n";
+                        String str = null;
+                        for(int i = 0; i < host.getNumberOfClients(); i++){
+                            str = host.recieveMessage(i);
+                            if(str != null){
+                                NetworkChatTestSwing.chatText += str + "\n";
+                            }
+                            str = null;
                         }
-                        TextArea.setText(NetworkChatTestSwing.chatText);
+                        textArea.setText(NetworkChatTestSwing.chatText);
                         System.out.println(NetworkChatTestSwing.chatText);
                     }
                     else{
@@ -200,7 +202,7 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
                         if(str != null){
                             NetworkChatTestSwing.chatText += str + "\n";
                         }
-                        TextArea.setText(NetworkChatTestSwing.chatText);
+                        textArea.setText(NetworkChatTestSwing.chatText);
                         System.out.println(NetworkChatTestSwing.chatText);
                     }
                 } catch (IOException ex) {
@@ -213,8 +215,8 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JScrollPane ScrollPane;
     public javax.swing.JButton SendButton;
-    public javax.swing.JTextArea TextArea;
-    public javax.swing.JTextField jTextField1;
+    public javax.swing.JTextArea textArea;
+    public javax.swing.JTextField textField;
     // End of variables declaration//GEN-END:variables
 
 }

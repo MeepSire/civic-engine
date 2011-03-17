@@ -25,12 +25,12 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="ScrollPane" alignment="0" pref="501" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jTextField1" min="-2" pref="378" max="-2" attributes="0"/>
+                      <Component id="textField" pref="375" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="SendButton" pref="105" max="32767" attributes="0"/>
+                      <Component id="SendButton" pref="117" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="ScrollPane" alignment="0" pref="492" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -38,13 +38,13 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="ScrollPane" min="-2" pref="285" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="SendButton" pref="55" max="32767" attributes="0"/>
-                  <Component id="jTextField1" alignment="0" pref="55" max="32767" attributes="0"/>
+              <Component id="ScrollPane" min="-2" pref="285" max="-2" attributes="1"/>
+              <EmptySpace max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="SendButton" alignment="1" max="32767" attributes="1"/>
+                  <Component id="textField" alignment="1" pref="37" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -56,7 +56,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextArea" name="TextArea">
+        <Component class="javax.swing.JTextArea" name="textArea">
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="editable" type="boolean" value="false"/>
@@ -65,10 +65,10 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JTextField" name="jTextField1">
+    <Component class="javax.swing.JTextField" name="textField">
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
-        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField1KeyPressed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textFieldActionPerformed"/>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="textFieldKeyPressed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="SendButton">

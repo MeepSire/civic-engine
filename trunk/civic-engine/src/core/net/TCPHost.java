@@ -8,9 +8,9 @@ import java.io.*;
 public class TCPHost extends Thread {
     
     private ServerSocket socket;
-    private Socket clientSocket = null;
+    private Socket[] clientSockets = new Socket[1000];
 
-    private BufferedReader in;
+    private BufferedReader[] in = new BufferedReader[1000];
     private PrintWriter out;
 
     public boolean connected = false;
@@ -20,18 +20,31 @@ public class TCPHost extends Thread {
     }
     
     public void acceptConnection() throws IOException{
-        clientSocket = socket.accept();
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        int a = getNumberOfClients();
+        clientSockets[a] = socket.accept();
+        in[a] = new BufferedReader(new InputStreamReader(clientSockets[a].getInputStream()));
         connected = true;
     }
     
-    public String recieveMessage() throws IOException{
-        return in.readLine();
+    public String recieveMessage(int clientNumber) throws IOException{
+        String str = in[clientNumber].readLine();
+        sendMessage(str);
+        return str;
     }
-    
+
+    public int getNumberOfClients(){
+        int a = 0;
+        while(clientSockets[a] != null){
+            a++;
+        }
+        return a;
+    }
+
     public void sendMessage(String msg) throws IOException{
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        out.println(msg);
+        for(int i = 0; i < getNumberOfClients(); i++){
+            out = new PrintWriter(clientSockets[i].getOutputStream(), true);
+            out.println(msg);
+        }
     }
     
 }
