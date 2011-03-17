@@ -26,6 +26,7 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
     public static TCPClient client;
     public static String nickName;
     public static boolean isHost;
+    public static String chatText="";
 
     public NetworkChatTestSwing() {
         initComponents();
@@ -105,10 +106,9 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
-        if(evt.getKeyCode() == 32){
+        if(evt.getKeyCode() == 10){
             SendButtonActionPerformed(null);
         }
-        System.out.println(evt.getKeyCode());
     }//GEN-LAST:event_jTextField1KeyPressed
 
     private void SendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendButtonActionPerformed
@@ -118,7 +118,8 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
-            TextArea.setText(TextArea.getText() + nickName + ": " + jTextField1.getText() + "\n");
+            chatText += nickName + ": " + jTextField1.getText() + "\n";
+            TextArea.setText(chatText);
             jTextField1.setText("");
         }
         else{
@@ -127,9 +128,11 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
             }
-            TextArea.setText(TextArea.getText() + nickName + ": " + jTextField1.getText() + "\n");
+            chatText += nickName + ": " + jTextField1.getText() + "\n";
+            TextArea.setText(chatText);
             jTextField1.setText("");
         }
+        System.out.println(chatText);
     }//GEN-LAST:event_SendButtonActionPerformed
 
     public static void main(String args[]) throws IOException {
@@ -184,10 +187,14 @@ public class NetworkChatTestSwing extends javax.swing.JFrame {
             while(true){
                 try {
                     if(NetworkChatTestSwing.isHost){
-                        TextArea.setText(TextArea.getText() + host.recieveMessage() + "\n");
+                        NetworkChatTestSwing.chatText += host.recieveMessage() + "\n";
+                        TextArea.setText(NetworkChatTestSwing.chatText);
+                        System.out.println(NetworkChatTestSwing.chatText);
                     }
                     else{
-                        TextArea.setText(TextArea.getText() + client.recieveMessage() + "\n");
+                        NetworkChatTestSwing.chatText += client.recieveMessage() + "\n";
+                        TextArea.setText(NetworkChatTestSwing.chatText);
+                        System.out.println(NetworkChatTestSwing.chatText);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(NetworkChatTestSwing.class.getName()).log(Level.SEVERE, null, ex);
