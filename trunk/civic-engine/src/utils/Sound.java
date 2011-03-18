@@ -1,22 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// @author Basti
 
 package utils;
 
-/**
- *
- * @author Basti
- */
-
-import java.applet.AudioClip;
+import java.awt.Point;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import  sun.audio.*;
-import  java.io.*;
+import sun.audio.*;
+import java.io.*;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -31,16 +23,22 @@ public class Sound{
     private InputStream in;
     private String url;
     
-    public Sound(String url) throws LineUnavailableException, IOException, UnsupportedAudioFileException{
+    public Sound(String url){
         this.url = url;
         reset(1,1);
     }
 
-    public void reset(float pan, float gain) throws LineUnavailableException, IOException, UnsupportedAudioFileException{
+    public void reset(float pan, float gain){
+        if(gain>6)gain=6;
         //AudioInputStream öffnen
-        AudioInputStream ais = AudioSystem.getAudioInputStream(
-        new File(url)
-        );
+        AudioInputStream ais=null;
+        try {
+            ais = AudioSystem.getAudioInputStream(new File(url));
+        } catch (UnsupportedAudioFileException ex) {
+            Logger.getLogger(Sound.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Sound.class.getName()).log(Level.SEVERE, null, ex);
+        }
         AudioFormat format = ais.getFormat();
         //ALAW/ULAW samples in PCM konvertieren
         if ((format.getEncoding() == AudioFormat.Encoding.ULAW) ||
@@ -64,8 +62,18 @@ public class Sound{
           format,
           ((int) ais.getFrameLength() * format.getFrameSize())
         );
-        clip = (Clip)AudioSystem.getLine(info);
-        clip.open(ais);
+        try {
+            clip = (Clip) AudioSystem.getLine(info);
+        } catch (LineUnavailableException ex) {
+            Logger.getLogger(Sound.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            clip.open(ais);
+        } catch (LineUnavailableException ex) {
+            Logger.getLogger(Sound.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Sound.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //PAN einstellen
         FloatControl panControl = (FloatControl)clip.getControl(
           FloatControl.Type.PAN
@@ -83,18 +91,34 @@ public class Sound{
         as = new AudioStream(in);
     }*/
 
-    public void startPlay() throws LineUnavailableException, IOException, UnsupportedAudioFileException{
+    public void startPlay(){
         reset(0,0);
         new Playing().start();
     }
 
-    public void startPlay(long pan) throws LineUnavailableException, IOException, UnsupportedAudioFileException{
+    public void startPlay(long pan){
         reset(pan,0);
         new Playing().start();
     }
 
-    public void startPlay(long pan, long gain) throws LineUnavailableException, IOException, UnsupportedAudioFileException{
+    public void startPlay(long pan, long gain){
         reset(pan,gain);
+        new Playing().start();
+    }
+
+    public void startPlay(int distance){
+        reset(0,6f-distance);
+        new Playing().start();
+    }
+
+    public void startPlay(Point listener,Point sound){
+        int distance = (int) listener.distance(sound);
+        int pos = sound.x-listener.x;
+        System.out.println("playing left with: "+(6f-320-pos-distance/20));
+        reset(-1f,6f-320-pos-distance/20);
+        new Playing().start();
+        System.out.println("playing right with: "+(6f-320+pos-distance/20));
+        reset(1f,6f-320+pos-distance/20);
         new Playing().start();
     }
 
