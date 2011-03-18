@@ -11,6 +11,8 @@
 
 package core.net;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,10 +88,22 @@ public class ChatFrame extends javax.swing.JFrame implements Runnable{
     }// </editor-fold>//GEN-END:initComponents
 
     private void sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendActionPerformed
-        try {
-            text.setText(text.getText()+ChatClient.send(ChatClient.nick+": "+input.getText()));
-            input.setText("");
-        } catch (Exception e){}
+        if(input.getText().equals("/quit")||input.getText().equals("/logout")||input.getText().equals("/exit")){
+            try {
+                ChatClient.send("... " + ChatClient.nick + " disconnected!");
+                System.exit(0);
+            } catch (Exception e){}
+        }else{
+            if(input.getText().equals("/clear")){
+                text.setText("");
+            }else{
+                try {
+                    text.setText(text.getText()+ChatClient.send(ChatClient.nick+": "+input.getText()));
+                    input.setText("");
+                } catch (Exception e){}
+            
+            }
+        }
     }//GEN-LAST:event_sendActionPerformed
 
     private void inputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputKeyPressed
