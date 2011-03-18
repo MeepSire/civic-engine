@@ -20,6 +20,8 @@ public class GameCore implements Runnable {
 
     private Actor[] actors;
 
+    private EventHandler eventHandler = new EventHandler();
+
     public GameCore(){
         initialize();
         thread.start();
@@ -43,7 +45,7 @@ public class GameCore implements Runnable {
         while(state != STOP && state != RESTART){
             if(state != PAUSE && state == RUN){
 
-                EventHandler.handleEvents();
+                eventHandler.handleEvents();
 
                 // try rendering
                 try{

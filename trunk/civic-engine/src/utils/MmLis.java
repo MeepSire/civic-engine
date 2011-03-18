@@ -20,8 +20,7 @@ public class MmLis implements MouseMotionListener{
     }
 
     public void mouseMoved(MouseEvent e) {
-        Draw.sound.startPlay(new Point(e.getX(),e.getY()), new Point(70,100));
-        System.out.println("spinn ich??");
+        Draw.sound.startPlay(new Point(e.getX(),e.getY()), new Point(500,100));
     }
 
 }

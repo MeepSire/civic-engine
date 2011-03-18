@@ -28,7 +28,7 @@ public class Draw extends JPanel implements Runnable{
     public void run() {
         this.setVisible(true);
         this.setFocusable(true);
-        sound = new Sound("D:\\Spiele\\Anarchy Online Tools\\ClickSaver-2.3.4\\found.wav");
+        sound = new Sound("/Users/Philipp/Desktop/axloadcomplete.wav");
         this.addMouseMotionListener(mouse);
         while(true){
             repaint();
@@ -38,7 +38,7 @@ public class Draw extends JPanel implements Runnable{
     @Override
     public void paint(Graphics g){
         g.setColor(Color.BLACK);
-        g.drawOval(70, 100, 2, 2);
+        g.drawOval(500, 100, 2, 2);
     }
 
 }
