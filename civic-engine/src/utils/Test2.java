@@ -27,7 +27,7 @@ public class Test2 extends javax.swing.JFrame {
     /** Creates new form Test2 */
     public Test2() throws FileNotFoundException, IOException, UnsupportedAudioFileException, LineUnavailableException {
         initComponents();
-        found = new Sound("D:\\Spiele\\Anarchy Online Tools\\ClickSaver-2.3.4\\found.wav");
+        found = new Sound("/Users/Philipp/Desktop/axloadcomplete.wav");
     }
 
     /** This method is called from within the constructor to

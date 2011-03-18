@@ -4,20 +4,24 @@ package core.events;
 
 public class EventHandler {
 
-    private static Event[] events = new Event[99999];
+    private Event[] events = new Event[99999];
 
-    public static void handleEvents(){
+    public EventHandler(){
+    }
+
+    public void handleEvents(){
         for(int i = 0; i < getEventsLength(); i++){
             events[i].execute();
         }
         clearEventsQueue();
     }
 
-    public static void addToEventQueue(Event evt){
+    public void addToEventQueue(Event evt){
+        System.out.println("added event to queue");
         events[getEventsLength()] = evt;
     }
 
-    private static void clearEventsQueue(){
+    private void clearEventsQueue(){
         int a = 0;
         while(events[a] != null){
             events[a] = null;
@@ -25,7 +29,7 @@ public class EventHandler {
         }
     }
 
-    private static int getEventsLength(){
+    private int getEventsLength(){
         int a = 0;
         while(events[a] != null){
             a++;

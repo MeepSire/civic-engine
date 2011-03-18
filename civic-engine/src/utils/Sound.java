@@ -113,12 +113,17 @@ public class Sound{
 
     public void startPlay(Point listener,Point sound){
         int distance = (int) listener.distance(sound);
-        int pos = sound.x-listener.x;
-        System.out.println("playing left with: "+(6f-320-pos-distance/20));
-        reset(-1f,6f-320-pos-distance/20);
+        int pos_1 = sound.x-listener.x-100;
+        int pos_2 = sound.x-listener.x+100;
+        //System.out.println("playing left with: "+(6f-320-pos-distance/20));
+        if(sound.x <= pos_2 && sound.x >= pos_1){
+            pos_1 = 0;
+            pos_2 = 0;
+        }
+        reset(-1f,6-Math.abs(pos_1/10) * distance/200);
         new Playing().start();
-        System.out.println("playing right with: "+(6f-320+pos-distance/20));
-        reset(1f,6f-320+pos-distance/20);
+        //System.out.println("playing right with: "+(6f-320+pos-distance/20));
+        reset(1f,6-Math.abs(pos_2/10) * distance/200);
         new Playing().start();
     }
 

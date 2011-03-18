@@ -21,7 +21,7 @@ public class TestActor extends Actor implements Moveable {
     public void act(Key key){
 
         Key[] keys = this.getKeys();
-
+/*
         if(key.getKeyCode() == keys[0].getKeyCode()){
             EventHandler.addToEventQueue(new MoveEvent(new Point(position.x - 1, position.y), this));
         }
@@ -42,7 +42,7 @@ public class TestActor extends Actor implements Moveable {
                 //EventHandler.addToEventQueue(new SpeedTestEvent());
             }
         }
-
+*/
     }
 
     public void setPosition(Point destination) {
