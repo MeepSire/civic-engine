@@ -2,44 +2,111 @@
 
 package core.net;
 
+import core.net.protocols.*;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.*;
 
-public class ChatClient  {
+public class ChatClient extends Thread {
 
-    String text = "";
-    public static String nick;
-    public static TCPClient client;
+    private String nick;
+    private TCPClient client;
+    private ChatProtocol protocol = new ChatProtocol();
+    private int id = -1;
 
-    public static void connect(String ip, int port){
-        client = new TCPClient(ip, port);
+    public ChatClient(){
+
+        this.nick = OOUtil.readString("Nick: ");
+        this.client = new TCPClient(OOUtil.readString("Hostname: "), OOUtil.readInt("Port: "), protocol);
+        new Thread(this).start();
+        new UpdaterThread();
+
     }
 
-    public static String send(String str) throws UnknownHostException, IOException{
-        client.sendMessage(str);
-        TCPPackage pkg = client.getRecievedPackage();
-            String[] msg = pkg.getMessages();
-            String str2="";
-            for(int i = 0; i < msg.length; i++){
+    @Override
+    public void run(){
 
-                if(msg[i] != null && !msg[i].equals("")){
-                     str2 += msg[i]+"\n";
+        String inp = "";
+
+        while(!inp.equals("/quit")){
+
+            try {
+                TCPPackage pkg = protocol.createPackage(id, nick);
+                pkg.addLine("MSG=" + nick + ": " + OOUtil.readString(""));
+                client.sendPackage(pkg);
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            try {
+                update();
+            } catch (WrongPackageTypeException ex) {
+                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+
+    }
+
+    public void update() throws WrongPackageTypeException{
+        TCPPackage pkg = client.getRecievedPackage();
+
+        String[] msg = protocol.getMessages(pkg);
+
+        if(id == -1){
+            id = protocol.getClientID(pkg);
+            System.out.println(id);
+        }
+
+        for(int i = 0; i < msg.length; i++){
+            System.out.println(msg[i]);
+        }
+    }
+
+    public static void main(String[] args){
+        new ChatClient();
+    }
+
+    private class UpdaterThread extends Thread {
+
+        public UpdaterThread(){
+
+            new Thread(this).start();
+
+        }
+
+        @Override
+        public void run(){
+
+            while(true){
+
+                // UPDATE
+                try {
+                    client.sendPackage(protocol.createPackage(id, ""));
+
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
+                try {
+                    update();
+                } catch (WrongPackageTypeException ex) {
+                    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                // SLEEP
+                try {
+                    this.sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            return str2;
-    }
-
-    public static String update() throws UnknownHostException, IOException{
-        return send("");
-    }
-
-    public static void main(String[] args) throws IOException{
-
-        new Connect().setVisible(true);
-
-        while(true){
-                        
         }
 
     }

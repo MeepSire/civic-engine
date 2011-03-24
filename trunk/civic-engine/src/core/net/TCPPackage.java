@@ -2,79 +2,67 @@
 
 package core.net;
 
+import core.net.protocols.Protocol;
+import java.io.PrintWriter;
+
 public class TCPPackage {
 
-    public static final char seperator = 678;
-    public static final char idMarker = 679;
+    private String[] line = new String[99999];
 
-
-    private int clientID;
-    private String[] messages = new String[9999];
-
-    public TCPPackage(int clientID){
-        this.clientID = clientID;
-
-        for(int i = 0; i < messages.length; i++){
-            messages[i] = null;
+    public TCPPackage(){
+        for(int a = 0; a < line.length; a++){
+            line[a] = "";
         }
     }
 
-    public void addMessage(String msg){
-        if(msg != null && !msg.equals("")){
-            int a = 0;
-            while(messages[a] != null && a < messages.length){
-                a++;
-            }
-            messages[a] = msg;
+    public void addLine(String str){
+        line[getNumberOfLines()] = str;
+    }
+
+    public String getLine(int i){
+        if(i >= 0 && i < line.length){
+            return line[i];
+        }
+        else{
+            return null;
         }
     }
 
-    public String[] getMessages(){
-        return messages;
+    public boolean validarePackage(Protocol protocol){
+        return protocol.validatePackage(this);
     }
 
-    public int getClientID(){
-        return clientID;
-    }
-
-    public String getPackageString(){
-        String str = "";
-        str += clientID + "" + idMarker;
+    public int getNumberOfLines(){
         int a = 0;
-        while(messages[a] != null){
-            str += messages[a] + "" + seperator;
+        while(line[a] != null && !line[a].equals("")){
             a++;
+        }
+        return a;
+    }
+
+    public void send(PrintWriter out){
+        if(out != null){
+            for(int i = 0; i < getNumberOfLines(); i++){
+                out.println(line[i]);
+            }
+            out.println("");
+        }
+    }
+
+    public boolean validate(Protocol protocol){
+        return protocol.validatePackage(this);
+    }
+
+    @Override
+    public String toString(){
+        String str = "";
+        for(int i = 0; i < getNumberOfLines(); i++){
+            if(i != 0)str += "\n" + line[i];
+            else str+= line[i];
         }
         return str;
     }
 
-    public static TCPPackage getPackageFromString(String pkgString){
-
-        String str = "";
-
-        int pos = 0;
-        while(pkgString.charAt(pos) != idMarker){
-            str += pkgString.charAt(pos);
-            pos++;
-            if(pos > pkgString.length() - 1)break;
-        }
-
-        TCPPackage pkg = new TCPPackage(Integer.parseInt(str));
-
-        while(pos <= pkgString.length()){
-            str = "";
-            while(pkgString.charAt(pos) != seperator && pkgString.charAt(pos) != idMarker){
-                str += pkgString.charAt(pos);
-                pos++;
-                if(pos > pkgString.length() - 1)break;
-            }
-            if(pkgString.charAt(pos) != idMarker)pkg.addMessage(str);
-            pos++;
-            if(pos > pkgString.length() - 1)break;
-        }
-
-        return pkg;
-
-    }
+    
 
 }
