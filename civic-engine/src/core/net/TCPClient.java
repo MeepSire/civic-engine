@@ -2,6 +2,7 @@
 
 package core.net;
 
+import core.net.protocols.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -14,27 +15,25 @@ public class TCPClient {
     private int port;
     private TCPPackage recievedPackage = null;
 
-    private int ID = -1;
+    private Protocol protocol;
 
-    public TCPClient(String hostname, int port) {
+    public TCPClient(String hostname, int port, Protocol protocol) {
         this.hostname = hostname;
         this.port = port;
-        try {
-            sendMessage("");
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(TCPClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TCPClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.protocol = protocol;
+    }
 
+    public Protocol getProtocol(){
+        return protocol;
     }
 
     public TCPPackage getRecievedPackage(){
         return recievedPackage;
     }
 
-    public void sendMessage(String str) throws UnknownHostException, IOException{
+    public void sendPackage(TCPPackage pkg) throws UnknownHostException, IOException{
 
+        // CONNECT SOCKET
         Socket socket = null;
 
         while(socket == null){
@@ -50,42 +49,34 @@ public class TCPClient {
             socket = new Socket(hostname, port);
         }
 
+        // WRITE TO SOCKET
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        
-        TCPPackage pkg = new TCPPackage(ID);
-        pkg.addMessage(str);
-        
-        out.println(pkg.getPackageString());
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        pkg.send(out);
 
-        String read = null;
+        BufferedReader in = null;
 
-        while(read == null){
-            try{
-                read = in.readLine();
-            }
-            catch(Exception e){
+        // READ FROM SOCKET
+        while(in == null){
+            try {
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            } catch (Exception e) {
             }
         }
 
-        TCPPackage rPkg = TCPPackage.getPackageFromString(read);
+        TCPPackage rPkg = null;
+
+        try {
+            rPkg = protocol.getPackageFromStream(in);
+        } catch (WrongPackageTypeException ex) {
+            System.out.println(ex.getMessage());
+        }
 
         recievedPackage = rPkg;
 
-        if(ID == -1) {
-            ID = rPkg.getClientID();
-            System.out.println(ID);
-        }
-
-        String[] msg = rPkg.getMessages();
-        for(int i = 0; i < msg.length; i++){
-            // if(msg[i] != null && !msg[i].equals(""))System.out.println(msg[i]);
-        }
-        // System.out.println();
-
         out.close();
-
+        
         while(!socket.isClosed()){
             socket.close();
         }
