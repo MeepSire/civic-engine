@@ -11,7 +11,7 @@ import java.io.*;
  *
  * @author Basti
  */
-public abstract class file {
+public abstract class TextFile {
     public static boolean download(String url, String dest) throws IOException{
         try{
             java.io.BufferedInputStream in = new java.io.BufferedInputStream(new

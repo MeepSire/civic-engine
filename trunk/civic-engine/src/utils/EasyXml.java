@@ -17,33 +17,65 @@ import org.w3c.dom.NodeList;
  *
  * @author Basti
  */
-public class xml {
+public class EasyXml {
 
     public Part[] part= new Part[9999];
     private int parts = 0;
     public String url,name;
 
-    public xml(String name){
+    public EasyXml(String name){
         this.name = name;
+        System.out.println("EasyXml-created: "+name);
     }
     
-    public static String find(String url, String[] node){
+    public static String[] find(File file, String[] node){
         try {
-            File file = new File(url);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(file);
             doc.getDocumentElement().normalize();
-            int[]id=new int[5];
-            NodeList nodeLst = doc.getElementsByTagName(node[0]);
-            for(int i=1;i<node.length;i++){
-                Node fstNode = nodeLst.item(0);
-                Element fstElmnt = (Element) fstNode;
-                nodeLst = fstElmnt.getElementsByTagName(node[i]);
+            NodeList nodeLst = doc.getElementsByTagName(node[node.length-1]);
+
+            Element element;
+            NodeList scnLst;
+
+            if(node.length>1){
+                
+                String[] str;
+                String[] firstStr=new String[9999];
+                int strLength =0;
+
+                for(int i=0;i<nodeLst.getLength();i++){
+                    Node newNode=nodeLst.item(i);
+                    boolean entspricht = true;
+                    for(int j=node.length-1;j>0;j--){
+                        if(newNode.getParentNode().getNodeName().equals(node[j-1])){
+                            newNode = newNode.getParentNode();
+                        }
+                        else{
+                            entspricht = false;
+                            break;
+                        }
+                    }
+                    if (entspricht){
+                        firstStr[strLength]=nodeLst.item(i).getTextContent();
+                        strLength++;
+                    }
+                }
+                str = new String[strLength];
+                for(int i=0;i<str.length;i++){
+                    str[i]=firstStr[i];
+                }
+                return str;
+            }else{
+                int lng = nodeLst.getLength();
+                String[] str = new String[lng];
+                for(int i=0;i<str.length;i++){
+                    str[i]=nodeLst.item(i).getTextContent();
+                }
+                return str;
             }
-            Element fstNmElmnt = (Element) nodeLst.item(0);
-            NodeList fstNm = fstNmElmnt.getChildNodes();
-            return ((Node) fstNm.item(0)).getNodeValue();
+            
         }catch(Exception e){
             return null;
         }
@@ -51,7 +83,6 @@ public class xml {
 
     public boolean save(String url){
         try{
-            File file = new File(url);
             //String here ->
             String str ="<?xml version=\"1.0\" encoding=\"iso-8859-15\" ?>\n<"+name+">\n";
             for(int i=0;i<parts;i++){
@@ -59,7 +90,7 @@ public class xml {
             }
             str +="</"+name+">";
             //String here <-
-            utils.file.save(str,url);
+            utils.TextFile.save(str,url);
             return true;
         }
         catch(Exception e){
@@ -102,4 +133,5 @@ public class xml {
         }
         return str;
     }
+
 }
