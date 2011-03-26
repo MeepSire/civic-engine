@@ -20,64 +20,93 @@ import org.w3c.dom.NodeList;
 public class EasyXml {
 
     public Part[] part= new Part[9999];
-    private int parts = 0;
+    protected int parts = 0;
     public String url,name;
 
     public EasyXml(String name){
         this.name = name;
-        System.out.println("EasyXml-created: "+name);
     }
-    
+
     public static String[] find(File file, String[] node){
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(file);
-            doc.getDocumentElement().normalize();
-            NodeList nodeLst = doc.getElementsByTagName(node[node.length-1]);
+        if(file.exists()){
+            try {
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document doc = db.parse(file);
+                doc.getDocumentElement().normalize();
+                Node firstNode = doc.getChildNodes().item(0);
+                NodeList nodeLst = doc.getElementsByTagName(node[node.length-1]);
 
-            Element element;
-            NodeList scnLst;
+                Element element;
+                NodeList scnLst;
 
-            if(node.length>1){
+                if(node.length>1){
                 
-                String[] str;
-                String[] firstStr=new String[9999];
-                int strLength =0;
+                    String[] str;
+                    String[] firstStr=new String[9999];
+                    int strLength =0;
 
-                for(int i=0;i<nodeLst.getLength();i++){
-                    Node newNode=nodeLst.item(i);
-                    boolean entspricht = true;
-                    for(int j=node.length-1;j>0;j--){
-                        if(newNode.getParentNode().getNodeName().equals(node[j-1])){
-                            newNode = newNode.getParentNode();
+                    for(int i=0;i<nodeLst.getLength();i++){
+                        Node newNode=nodeLst.item(i);
+                        boolean entspricht = false;
+                        for(int j=node.length-2;j>=0;j--){
+                            while((!newNode.getParentNode().equals(firstNode))&&(!newNode.getParentNode().getNodeName().equals(node[j]))){
+                                newNode = newNode.getParentNode();
+                            }
                         }
-                        else{
-                            entspricht = false;
-                            break;
+                        if(!newNode.getParentNode().getNodeName().equals(firstNode.getNodeName()))entspricht=true;
+                        if (entspricht){
+                            int j=0;
+                            while(j<nodeLst.item(i).getChildNodes().getLength()){
+                                if(!nodeLst.item(i).getChildNodes().item(j).getNodeName().equals("#text")){
+                                    firstStr[strLength]=nodeLst.item(i).getChildNodes().item(j).getNodeName();
+                                    strLength++;
+                                }else{
+                                    if(nodeLst.item(i).getChildNodes().getLength()==1){
+                                        firstStr[strLength]=nodeLst.item(i).getChildNodes().item(j).getTextContent();
+                                        strLength++;j++;
+                                    }
+                                }
+                                j++;
+                            }
                         }
                     }
-                    if (entspricht){
-                        firstStr[strLength]=nodeLst.item(i).getTextContent();
-                        strLength++;
+                    str = new String[strLength];
+                    for(int i=0;i<str.length;i++){
+                        str[i]=firstStr[i];
                     }
+                    return str;
+                }else{
+                    String[] firstStr = new String[9999];
+                    int lng = nodeLst.getLength();
+                    int strLength=0;
+                    for(int i=0;i<lng;i++){
+                        int j=0;
+                            while(j<nodeLst.item(i).getChildNodes().getLength()){
+                                if(!nodeLst.item(i).getChildNodes().item(j).getNodeName().equals("#text")){
+                                    firstStr[strLength]=nodeLst.item(i).getChildNodes().item(j).getNodeName();
+                                    strLength++;
+                                }else{
+                                    if(nodeLst.item(i).getChildNodes().getLength()==1){
+                                        firstStr[strLength]=nodeLst.item(i).getChildNodes().item(j).getTextContent();
+                                        strLength++;j++;
+                                    }
+                                }
+                                j++;
+                            }
+                    }
+                    String[] str = new String[strLength];
+                    for(int i=0;i<str.length;i++){
+                        str[i]=firstStr[i];
+                    }
+                    return str;
                 }
-                str = new String[strLength];
-                for(int i=0;i<str.length;i++){
-                    str[i]=firstStr[i];
-                }
-                return str;
-            }else{
-                int lng = nodeLst.getLength();
-                String[] str = new String[lng];
-                for(int i=0;i<str.length;i++){
-                    str[i]=nodeLst.item(i).getTextContent();
-                }
-                return str;
+
+            }catch(Exception e){
+                return null;
             }
-            
-        }catch(Exception e){
-            return null;
+        }else{
+            return new String[]{};
         }
     }
 
