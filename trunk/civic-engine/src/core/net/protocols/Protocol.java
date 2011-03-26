@@ -20,7 +20,6 @@ public abstract class Protocol {
     }
 
     public void processReply(TCPPackage pkg) throws WrongPackageTypeException{
-
     }
 
     public TCPPackage getPackageFromStream(BufferedReader in) throws WrongPackageTypeException{
