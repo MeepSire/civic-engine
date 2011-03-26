@@ -4,28 +4,22 @@ package core.net;
 
 import core.net.protocols.Protocol;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class TCPPackage {
 
-    private String[] line = new String[99999];
+    private ArrayList line = new ArrayList();
 
     public TCPPackage(){
-        for(int a = 0; a < line.length; a++){
-            line[a] = "";
-        }
     }
 
     public void addLine(String str){
-        line[getNumberOfLines()] = str;
+        line.add(str);
     }
 
     public String getLine(int i){
-        if(i >= 0 && i < line.length){
-            return line[i];
-        }
-        else{
-            return null;
-        }
+        String str = (String)line.get(i);
+        return str;
     }
 
     public boolean validarePackage(Protocol protocol){
@@ -33,17 +27,13 @@ public class TCPPackage {
     }
 
     public int getNumberOfLines(){
-        int a = 0;
-        while(line[a] != null && !line[a].equals("")){
-            a++;
-        }
-        return a;
+        return line.size();
     }
 
     public void send(PrintWriter out){
         if(out != null){
-            for(int i = 0; i < getNumberOfLines(); i++){
-                out.println(line[i]);
+            for(int i = 0; i < line.size(); i++){
+                out.println(getLine(i));
             }
             out.println("");
         }
@@ -57,8 +47,8 @@ public class TCPPackage {
     public String toString(){
         String str = "";
         for(int i = 0; i < getNumberOfLines(); i++){
-            if(i != 0)str += "\n" + line[i];
-            else str+= line[i];
+            if(i != 0)str += "\n" + getLine(i);
+            else str+= getLine(i);
         }
         return str;
     }

@@ -31,7 +31,7 @@ public class TCPClient {
         return recievedPackage;
     }
 
-    public void sendPackage(TCPPackage pkg) throws UnknownHostException, IOException{
+    public void sendPackage(TCPPackage pkg) throws UnknownHostException, IOException, WrongPackageTypeException{
 
         // CONNECT SOCKET
         Socket socket = null;
@@ -76,7 +76,9 @@ public class TCPClient {
         recievedPackage = rPkg;
 
         out.close();
-        
+
+        protocol.processReply(recievedPackage);
+
         while(!socket.isClosed()){
             socket.close();
         }

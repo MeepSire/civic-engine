@@ -2,12 +2,12 @@
 
 package core.net;
 
+import utils.OOUtil;
 import core.net.protocols.*;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import util.*;
 
 public class ChatClient extends Thread {
 
@@ -32,13 +32,16 @@ public class ChatClient extends Thread {
 
         while(!inp.equals("/quit")){
 
+            TCPPackage pkg = protocol.createPackage(id, nick);
+            pkg.addLine("MSG=" + nick + ": " + OOUtil.readString(""));
+
             try {
-                TCPPackage pkg = protocol.createPackage(id, nick);
-                pkg.addLine("MSG=" + nick + ": " + OOUtil.readString(""));
                 client.sendPackage(pkg);
             } catch (UnknownHostException ex) {
                 Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
+                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (WrongPackageTypeException ex) {
                 Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -59,7 +62,6 @@ public class ChatClient extends Thread {
 
         if(id == -1){
             id = protocol.getClientID(pkg);
-            System.out.println(id);
         }
 
         for(int i = 0; i < msg.length; i++){
@@ -83,14 +85,15 @@ public class ChatClient extends Thread {
         public void run(){
 
             while(true){
-
+                
                 // UPDATE
                 try {
-                    client.sendPackage(protocol.createPackage(id, ""));
-
+                    client.sendPackage(protocol.createPackage(id, nick, ""));
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
+                    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (WrongPackageTypeException ex) {
                     Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
@@ -102,10 +105,11 @@ public class ChatClient extends Thread {
 
                 // SLEEP
                 try {
-                    this.sleep(100);
+                    this.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
             }
         }
 

@@ -34,6 +34,7 @@ public class ChatProtocol extends Protocol {
 
         if(clientID == -1){
             clientID = getUniqueID();
+            if(host != null)host.printLog(getNickName(pkg) + " registered as " + clientID, TCPHost.IMPORTANT);
         }
 
         for(int a = 0; a < registeredIDs.length; a++){
@@ -49,6 +50,14 @@ public class ChatProtocol extends Protocol {
         
         return ret;
         
+    }
+
+    public void serverMessage(String msg){
+        for(int a = 0; a < registeredIDs.length; a++){
+            if(registeredIDs[a] != -2){
+                getPackageForID(registeredIDs[a]).addLine("MSG=SERVER: " + msg);
+            }
+        }
     }
 
     private void removePackageFromList(int ID) throws WrongPackageTypeException{
@@ -172,7 +181,7 @@ public class ChatProtocol extends Protocol {
             String[] msg = new String[0];
 
             for(int i = 0; i < pkg.getNumberOfLines(); i++){
-                if(pkg.getLine(i).startsWith("MSG=") /*&& !pkg.getLine(i).equals("MSG="+getNickName(pkg)+": ") */){
+                if(pkg.getLine(i).startsWith("MSG=") && !pkg.getLine(i).equals("MSG="+getNickName(pkg)+": ")){
                     String[] tempList = msg;
                     msg = new String[msg.length+1];
                     for(int a = 0; a < tempList.length; a++){
