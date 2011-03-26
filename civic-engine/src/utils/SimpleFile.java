@@ -1,17 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/**
+* @author Bastian Hinterleitner
+*/
+
+// CiviC Engine
 
 package utils;
 
 import java.io.*;
 
-/**
- *
- * @author Basti
- */
-public abstract class TextFile {
+public abstract class SimpleFile {
     public static boolean download(String url, String dest) throws IOException{
         try{
             java.io.BufferedInputStream in = new java.io.BufferedInputStream(new
@@ -63,9 +60,7 @@ public abstract class TextFile {
         dis.close();
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
         }
         return result;
     }

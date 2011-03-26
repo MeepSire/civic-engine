@@ -1,4 +1,8 @@
-// @author Basti
+/**
+* @author Bastian Hinterleitner
+*/
+
+// CiviC Engine
 
 package utils;
 
