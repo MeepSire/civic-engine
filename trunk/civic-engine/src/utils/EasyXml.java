@@ -1,7 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/**
+* @author Bastian Hinterleitner
+*/
+
+// CiviC Engine
 
 package utils;
 
@@ -13,10 +14,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- *
- * @author Basti
- */
 public class EasyXml {
 
     public Part[] part= new Part[9999];
@@ -25,6 +22,11 @@ public class EasyXml {
 
     public EasyXml(String name){
         this.name = name;
+    }
+
+    public String[] find(String[] node){
+        save(System.getProperty("java.io.tmpdir")+"\\tempEasyXml.xml");
+        return find(new File(System.getProperty("java.io.tmpdir")+"\\tempEasyXml.xml"),node);
     }
 
     public static String[] find(File file, String[] node){
@@ -119,7 +121,7 @@ public class EasyXml {
             }
             str +="</"+name+">";
             //String here <-
-            utils.TextFile.save(str,url);
+            utils.SimpleFile.save(str,url);
             return true;
         }
         catch(Exception e){

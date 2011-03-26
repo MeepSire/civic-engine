@@ -1,16 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/**
+* @author Bastian Hinterleitner
+*/
+
+// CiviC Engine
 
 package utils;
 
-import org.w3c.dom.NodeList;
-
-/**
- *
- * @author Basti
- */
 class Part {
 
         public Part[] part= new Part[9999];
@@ -19,16 +14,12 @@ class Part {
         public String info="";
         private int deep;
 
-        Part(String name,int d){
+        protected Part(String name,int d){
             deep=d;
             this.name = name;
         }
 
-        Part(NodeList nList, String name){
-            this.name = name;
-        }
-
-        Part(String name, String info, int d){
+        protected Part(String name, String info, int d){
             deep=d;
             this.name = name;
             this.info = info;
@@ -61,9 +52,14 @@ class Part {
         }
 
         public String[] getParts(){
-            String[] str = new String[parts];
-            for(int i=0;i<str.length;i++){
-                str[i]=part[i].name;
+            String[] str;
+            if(parts>0){
+                str = new String[parts];
+                for(int i=0;i<str.length;i++){
+                    str[i]=part[i].name;
+                }
+            }else{
+                str = new String[]{info};
             }
             return str;
         }
