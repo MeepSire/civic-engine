@@ -3,7 +3,10 @@
 package core;
 
 import core.events.EventHandler;
+import core.interfaces.Drawable;
 import java.awt.Point;
+import net.phys2d.math.Vector2f;
+import net.phys2d.raw.*;
 
 public class GameCore implements Runnable {
 
@@ -22,6 +25,9 @@ public class GameCore implements Runnable {
 
     private EventHandler eventHandler = new EventHandler();
 
+    // physics
+    private World world;
+
     public GameCore(){
         initialize();
         thread.start();
@@ -30,6 +36,15 @@ public class GameCore implements Runnable {
 
     public void initialize(){
         // TODO: add initialization code here
+        world = new World(new Vector2f(0, 2000), 0);
+    }
+
+    public World getWorld(){
+        return world;
+    }
+
+    public void setGravity(float x, float y){
+        world.setGravity(x, y);
     }
 
     public void setState(int state){
@@ -46,10 +61,16 @@ public class GameCore implements Runnable {
             if(state != PAUSE && state == RUN){
 
                 eventHandler.handleEvents();
-
+                world.step();   // physics
+                
                 // try rendering
                 try{
                     // TODO: rendering
+                    for(int i = 0; i < actors.length; i++){
+                        if(actors[i] instanceof Drawable == true){
+                            ((Drawable)actors[i]).draw(null);   // TODO: Draw to Volatile/Buffered Image
+                        }
+                    }
                 }
                 catch(Exception ex){
                 }
