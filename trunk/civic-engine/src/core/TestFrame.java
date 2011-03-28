@@ -4,6 +4,7 @@ package core;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import javax.swing.JFrame;
 
 import core.actors.*;
@@ -14,19 +15,19 @@ public class TestFrame extends JFrame implements Runnable {
     Actor[] actors;
     Player[] player;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         new GameCore();
         new TestFrame();
 
     }
     
-    public TestFrame(){
+    public TestFrame() throws IOException{
         
         
         // create a test actor
         actors = new Actor[]{
-          new TestActor(new Point(0, 0), "Mario")
+          new TestActor()
         };
         
         actors[0].setKeys(new Key[]{ new Key(39), new Key(37), new Key(38), new Key(40) });
