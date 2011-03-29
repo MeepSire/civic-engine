@@ -5,7 +5,7 @@ package core.actors;
 import core.*;
 import core.events.*;
 import core.interfaces.*;
-import core.sprite.Sprite;
+import core.graphics.Sprite;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.File;
@@ -18,7 +18,6 @@ import net.phys2d.raw.shapes.Box;
 public class TestActor extends Actor implements Drawable {
 
     private Sprite sprite;
-    private Body body;
 
     private EventHandler evtHandler = new EventHandler();
 
@@ -27,18 +26,14 @@ public class TestActor extends Actor implements Drawable {
         body = new Body(new Box(sprite.getFrameSize().width, sprite.getFrameSize().height), 10);
     }
 
-    public Body getBody(){
-        return body;
-    }
-
     @Override
     public void act(Key key){
 
         Key[] keys = this.getKeys();
 
-        evtHandler.addToEventQueue(new PhysicsForceEvent(body, new Vector2f(0, -2000))); // force pushing body upwards
-        evtHandler.addToEventQueue(new PhysicsForceEvent(body, new Vector2f(20, 0))); // force pushing body right
-        evtHandler.addToEventQueue(new PhysicsForceEvent(body, new Vector2f(-20, 0))); // force pushing body left
+        if(key.equals(keys[0]))evtHandler.addToEventQueue(new PhysicsForceEvent(body, new Vector2f(0, -2000))); // force pushing body upwards
+        if(key.equals(keys[1]))evtHandler.addToEventQueue(new PhysicsForceEvent(body, new Vector2f(20, 0))); // force pushing body right
+        if(key.equals(keys[2]))evtHandler.addToEventQueue(new PhysicsForceEvent(body, new Vector2f(-20, 0))); // force pushing body left
 
     }
 
@@ -51,7 +46,7 @@ public class TestActor extends Actor implements Drawable {
         AffineTransform newXform = (AffineTransform)(origXform.clone());
         
         // rotate graphics around sprite
-        newXform.rotate(Math.toRadians(body.getRotation()), x, y);
+        newXform.rotate(Math.toRadians(body.getRotation()), x + sprite.getFrameSize().width/2, y + sprite.getFrameSize().height/2);
         g2d.setTransform(newXform);
         
         // draw sprite to the rotated graphics
