@@ -3,8 +3,12 @@
 package core;
 
 import core.events.EventHandler;
+import core.graphics.GameGraphics;
 import core.interfaces.Drawable;
 import java.awt.Point;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.*;
 
@@ -25,8 +29,11 @@ public class GameCore implements Runnable {
 
     private EventHandler eventHandler = new EventHandler();
 
-    // physics
     private World world;
+
+    private BufferedImage frame = null;
+
+    private GameGraphics gfx;
 
     public GameCore(){
         initialize();
@@ -34,9 +41,19 @@ public class GameCore implements Runnable {
         gameCore = this;
     }
 
+    public void addActor(Actor actor){
+        ArrayList list = new ArrayList();
+        for(int i = 0; i < actors.length; i++){
+            list.add(actors[i]);
+        }
+        list.add(actor);
+        actors = (Actor[])list.toArray();
+    }
+
     public void initialize(){
         // TODO: add initialization code here
         world = new World(new Vector2f(0, 2000), 0);
+        gfx = new GameGraphics(640, 480);
     }
 
     public World getWorld(){
@@ -65,12 +82,15 @@ public class GameCore implements Runnable {
                 
                 // try rendering
                 try{
-                    // TODO: rendering
+
+                    ArrayList list = new ArrayList();
+
                     for(int i = 0; i < actors.length; i++){
-                        if(actors[i] instanceof Drawable == true){
-                            ((Drawable)actors[i]).draw(null);   // TODO: Draw to Volatile/Buffered Image
-                        }
+                        if(actors[i] instanceof Drawable == true) list.add(actors[i]);
                     }
+
+                    frame = gfx.render((Drawable[])list.toArray());
+                    
                 }
                 catch(Exception ex){
                 }
