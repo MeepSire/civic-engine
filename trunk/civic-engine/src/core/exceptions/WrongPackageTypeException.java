@@ -1,6 +1,6 @@
 // @author: Philipp Jean-Jacques
 
-package core.net.protocols;
+package core.exceptions;
 
 public class WrongPackageTypeException extends Exception {
 

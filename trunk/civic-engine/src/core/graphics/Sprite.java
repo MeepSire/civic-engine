@@ -2,6 +2,7 @@
 
 package core.graphics;
 
+import core.exceptions.NoSuchAnimationException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
