@@ -2,6 +2,7 @@
 
 package core.net.protocols;
 
+import core.exceptions.WrongPackageTypeException;
 import core.net.*;
 import java.io.*;
 import java.util.logging.Level;

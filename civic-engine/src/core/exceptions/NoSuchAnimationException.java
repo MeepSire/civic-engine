@@ -1,8 +1,8 @@
 // @author: Philipp Jean-Jacques
 
-package core.graphics;
+package core.exceptions;
 
-class NoSuchAnimationException extends Exception {
+public class NoSuchAnimationException extends Exception {
 
     public NoSuchAnimationException(String msg){
         super("no such animation: " + msg);
