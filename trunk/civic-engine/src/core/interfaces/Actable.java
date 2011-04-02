@@ -2,11 +2,10 @@
 
 package core.interfaces;
 
-import core.Key;
+import org.newdawn.slick.Input;
 
 public interface Actable {
 
-    public void act(Key key);
-    public Key[] getKeys();
+    public void act(Input input);
 
 }

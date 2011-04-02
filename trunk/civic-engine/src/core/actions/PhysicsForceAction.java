@@ -6,6 +6,7 @@
 package core.actions;
 
 import core.Actor;
+import core.actors.*;
 import net.phys2d.math.Vector2f;
 
 // @author: Philipp Jean-Jacques
@@ -13,9 +14,9 @@ import net.phys2d.math.Vector2f;
 public class PhysicsForceAction extends Action {
 
     private Vector2f force;
-    private Actor actor;
+    private PhysicsActor actor;
 
-    public PhysicsForceAction(Actor actor, Vector2f force){
+    public PhysicsForceAction(PhysicsActor actor, Vector2f force){
         this.actor = actor;
         this.force = force;
     }

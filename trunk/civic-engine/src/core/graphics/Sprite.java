@@ -3,97 +3,92 @@
 package core.graphics;
 
 import core.exceptions.NoSuchAnimationException;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 
 public class Sprite {
 
-    private Color alphaColor = new Color(0,0,0,0);
-    private Dimension frameSize;
-    private final BufferedImage spriteSheet;
-    private Animation[] animation = new Animation[0];
+    private final SpriteSheet spriteSheet;
+    private ArrayList animation = new ArrayList();
     private Animation activeAnimation;
+    private boolean flipH, flipV = false;
 
-    public Sprite(BufferedImage spriteSheet, Dimension frameSize, Color alphaColor){
+    public Sprite(SpriteSheet spriteSheet){
 
-        this.alphaColor = alphaColor;
-        this.frameSize = frameSize;
         this.spriteSheet = spriteSheet;
+        addAnimation(new Animation("NONE", this, 0, 0, 0, 0, 0, false));
 
-        addAnimation(new Animation("NONE", this, 0, 0, frameSize.width, frameSize.height, 0, false));
+    }
 
+    public void flip(boolean horizontal, boolean vertical){
+        flipH = horizontal;
+        flipV = vertical;
     }
 
     public void addAnimation(Animation ani){
-        ArrayList anis = new ArrayList();
-        for(int i = 0; i < animation.length; i++){
-            anis.add(animation[i]);
-        }
-        anis.add(ani);
-        animation = (Animation[])anis.toArray();
+        animation.add(ani);
     }
 
     public void removeAnimation(Animation ani){
-        ArrayList anis = new ArrayList();
-        for(int i = 0; i < animation.length; i++){
-            anis.add(animation[i]);
-        }
-        anis.remove(ani);
-        animation = (Animation[])anis.toArray();
+        animation.remove(ani);
     }
 
-    public void setAnimation(String name) throws NoSuchAnimationException {
+    public void setAnimation(String name) {
         Animation ani = getAnimationForName(name);
         if(ani != null){
-            activeAnimation.stop(); // STOP THE OLD ANIMATION
+            if(activeAnimation != null)activeAnimation.stop(); // STOP THE OLD ANIMATION
             activeAnimation = ani;
             activeAnimation.start(); // START THE NEW ANIMATION
         }
         else{
-            new NoSuchAnimationException(name + " in " + this.toString());
+            System.out.println("No Such Animation");
         }
     }
 
     public String[] getAnimationNames(){
         ArrayList names = new ArrayList();
 
-        for(int i = 0; i < animation.length; i++){
-            names.add(animation[i].getName());
+        for(int i = 0; i < animation.size(); i++){
+            names.add(((Animation)animation.get(i)).getName());
         }
 
         return (String[])names.toArray();
     }
 
     public Animation[] getAnimations(){
-        return animation;
+        Animation[] animations = new Animation[animation.size()];
+        for(int i = 0; i < animations.length; i++){
+            animations[i] = (Animation)animation.get(i);
+        }
+        return animations;
     }
 
     private Animation getAnimationForName(String name){
-        for(int i = 0; i < animation.length; i++){
-            if(animation[i].getName().equals(name)){
-                return animation[i];
+        Animation[] animations = getAnimations();
+        for(int i = 0; i < animations.length; i++){
+            if(animations[i].getName().equals(name)){
+                return animations[i];
             }
         }
         return null;
     }
 
-    public Dimension getFrameSize(){
-        return frameSize;
-    }
-
-    public BufferedImage getSpriteSheet(){
+    public SpriteSheet getSpriteSheet(){
         return spriteSheet;
     }
 
-    public BufferedImage getActiveFrame(){
-        return activeAnimation.getActiveFrame();
+    public Image getActiveFrame(){
+        return activeAnimation.getActiveFrame().getFlippedCopy(flipH, flipV);
+        //return spriteSheet.getSprite(0, 0);
     }
 
     // MIGHT BE USED FOR PER-PIXEL COLLISION (SLOW)
-    public Polygon getBounds(){
+    /*
+    public Polygon getBounds(Color alphaColor){
 
-        BufferedImage image = getActiveFrame();
+        BufferedImage image = (BufferedImage)getActiveFrame();
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -125,9 +120,6 @@ public class Sprite {
         return shape;
 
     }
-
-    public void setAlphaColor(Color c){
-        alphaColor = c;
-    }
+    */
 
 }

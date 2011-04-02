@@ -98,14 +98,14 @@ public class Trigger implements EventListener {
     public void run(Event evt){
         if(checkConditions(evt) == true){
             for(int i = 0; i < actions.length; i++){
-                GameCore.actionHandler.addToActionQueue(actions[i]);
+                //GameCore.actionHandler.addToActionQueue(actions[i]);
             }
         }
     }
 
     public void runIgnoreConditions(){
         for(int i = 0; i < actions.length; i++){
-            GameCore.actionHandler.addToActionQueue(actions[i]);
+            //GameCore.actionHandler.addToActionQueue(actions[i]);
         }
     }
 
