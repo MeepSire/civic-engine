@@ -65,6 +65,10 @@ public class Sprite {
         return animations;
     }
 
+    public Animation getActiveAnimation(){
+        return activeAnimation;
+    }
+
     private Animation getAnimationForName(String name){
         Animation[] animations = getAnimations();
         for(int i = 0; i < animations.length; i++){

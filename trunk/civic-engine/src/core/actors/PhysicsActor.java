@@ -41,8 +41,8 @@ public abstract class PhysicsActor extends Actor implements Drawable {
 
     public void draw(Graphics g) {
         Image img = sprite.getActiveFrame();
-        img.rotate(body.getRotation());
-        img.draw(body.getPosition().getX(), body.getPosition().getY());
+        img.rotate(img.getRotation() + body.getRotation());
+        img.draw(body.getPosition().getX() - body.getShape().getBounds().getWidth()/2, body.getPosition().getY() - body.getShape().getBounds().getHeight()/2 );
     }
 
 }
