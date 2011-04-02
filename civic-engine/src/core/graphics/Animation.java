@@ -2,15 +2,15 @@
 
 package core.graphics;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.newdawn.slick.Image;
 
 public class Animation implements Runnable {
 
-    private BufferedImage[] frame;
-    private BufferedImage activeFrame;
+    private Image[] frame;
+    private Image activeFrame;
     private long speed;
     private Thread thread;
     private boolean rotation = true;
@@ -23,30 +23,24 @@ public class Animation implements Runnable {
         setSpeed(speed);
         this.rotation = rotation;
 
-        Dimension frameSize = sprite.getFrameSize();
+        ArrayList list = new ArrayList();
 
-        int n = (Math.abs(startx - endx) * Math.abs(starty - endy)) / (frameSize.width*frameSize.height);
-
-        frame = new BufferedImage[n];
-        activeFrame = frame[0];
-
-        BufferedImage spriteSheet = sprite.getSpriteSheet();
-
-        int srcx = startx;
-        int srcy = starty;
-
-        for(int i = 0; i < n; i++){
-            frame[i] = new SpriteFrame(spriteSheet, new Rectangle(srcx, srcy, frameSize.width, frameSize.height)).getImage();
-            srcx += frameSize.width;
-            if(srcx > endx){
-                srcx = startx;
-                srcy += frameSize.height;
-                if(srcy > endy){
-                    break;
-                }
+        for(int x = startx; x <= endx; x++){
+            for(int y = starty; y <= endy; y++){
+                list.add(sprite.getSpriteSheet().getSprite(x, y));
             }
         }
 
+        frame = new Image[list.size()];
+        
+        for(int i = 0; i < frame.length; i++){
+            frame[i] = (Image)list.get(i);
+        }
+        
+        if(list.size() > 0)activeFrame = frame[0];
+
+        thread = new Thread(this);
+        
     }
 
     public String getName(){
@@ -63,7 +57,7 @@ public class Animation implements Runnable {
         rotation = state;
     }
 
-        public BufferedImage getActiveFrame(){
+    public Image getActiveFrame(){
         return activeFrame;
     }
 
@@ -83,8 +77,8 @@ public class Animation implements Runnable {
     public void start(){
 
         if(!thread.isAlive()){
-            stop();
             thread = new Thread(this);
+            stop();
             thread.start();
             finished = false;
             pause = false;
@@ -94,7 +88,7 @@ public class Animation implements Runnable {
 
     }
 
-    public BufferedImage getNextFrame(){
+    public Image getNextFrame(){
         for(int i = 0; i < frame.length; i++){
             if(activeFrame.equals(frame[i])){
                 if(i+1 < frame.length){
@@ -125,23 +119,6 @@ public class Animation implements Runnable {
 
             if(!pause)getNextFrame();
 
-        }
-
-    }
-
-    // FOR EASY IMAGE CREATION
-    private class SpriteFrame {
-
-        private BufferedImage image = null;
-
-        public SpriteFrame(BufferedImage spriteSheet, Rectangle sourceRect){
-            image = new BufferedImage(sourceRect.width, sourceRect.height, BufferedImage.TYPE_BYTE_BINARY);
-            Graphics2D g2d = image.createGraphics();
-            g2d.drawImage(spriteSheet, 0, 0, image.getWidth(), image.getHeight(), sourceRect.x, sourceRect.y, sourceRect.x + sourceRect.width, sourceRect.y + sourceRect.height, null);
-        }
-
-        public BufferedImage getImage(){
-            return image;
         }
 
     }

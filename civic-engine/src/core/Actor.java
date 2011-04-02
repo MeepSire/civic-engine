@@ -2,17 +2,22 @@
 
 package core;
 
-import net.phys2d.raw.Body;
+import core.interfaces.Actable;
+import org.newdawn.slick.Input;
 
-public abstract class Actor {
-
-    protected Body body;
-
-    public Actor(){
+public abstract class Actor implements Actable {
+    
+    protected float x;
+    protected float y;
+    
+    public Actor(float x, float y){
+        this.x = x;
+        this.y = y;
     }
 
-    public Body getBody(){
-        return body;
+    public void setPosition(float x, float y){
+        this.x = x;
+        this.y = y;
     }
 
 }

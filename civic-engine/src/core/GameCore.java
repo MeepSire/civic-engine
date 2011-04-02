@@ -1,117 +1,93 @@
-// @author: Philipp Jean-Jacques
-
 package core;
 
-import core.actions.ActionHandler;
-import core.graphics.GameGraphics;
-import core.interfaces.Drawable;
-import java.awt.image.BufferedImage;
+// CIVIC
+import core.actors.*;
+import core.interfaces.*;
+
+// PHYS2D
 import java.util.ArrayList;
-import net.phys2d.raw.*;
+import net.phys2d.math.Vector2f;
+import net.phys2d.raw.World;
 
-public class GameCore implements Runnable {
+// SLICK
+import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.AppGameContainer;
 
-    // game state constants
-    public static final int RUN = 0;
-    public static final int STOP = 1;
-    public static final int PAUSE = 2;
-    public static final int RESTART = 3;
+public class GameCore extends BasicGame {
 
-    public static GameCore gameCore = null;
-
-    private Thread thread = new Thread(this);
-    private int state = 0;
-
-    private Actor[] actors;
-
-    public static ActionHandler actionHandler = new ActionHandler();
+    public static GameCore gamecore;
 
     private World world;
-
-    private BufferedImage frame = null;
-
-    private GameGraphics gfx;
-
-    // TODO: create network-game protocol
-    // TODO: add TCPHost to GameCore to enable Network gaming
-
-    public GameCore(GameGraphics gfx, World world){
-        initialize();
-        thread.start();
-        gameCore = this;
-        setGraphics(gfx);
-        setWorld(world);
-    }
-
-
-    public void initialize(){
-        // TODO: add initialization code here
-    }
-
-    public void setGraphics(GameGraphics gfx){
-        this.gfx = gfx;
-    }
-
-    public World getWorld(){
-        return world;
-    }
-
-    public void setWorld(World world){
+    private ArrayList actors = new ArrayList();
+    
+    public GameCore() {
+        super("CiviC Game Core");
         this.world = world;
+        this.gamecore = this;
     }
 
-    public void setState(int state){
-        this.state = state;
+    public void addActor(Actor actor){
+        actors.add(actor);
+        if(actor instanceof PhysicsActor == true){
+            PhysicsActor phActor = (PhysicsActor) actor;
+            world.add(phActor.getBody());
+        }
     }
 
-    public int getState(){
-        return state;
+    public void removeActor(Actor actor){
+        actors.remove(actor);
     }
 
-    public void run() {
+    @Override
+    public void init(GameContainer container) throws SlickException {
+        // MUST FIRST CREATE THE WORLD BEFORE ADDING ACTORS!
+        world = new World(new Vector2f(0, (float) 1), 100);
 
-        while(state != STOP && state != RESTART){
+        new Mario(200, 100); // NEW MARIO IS AUTOMATICALLY ADDED TO ACTORS AND WORLD
 
-            if(state != PAUSE && state == RUN){
+    }
 
-                // TODO: recieve Action Queue from host if in Client mode.
+    @Override
+    public void update(GameContainer container, int delta) throws SlickException {
+        // NETWORKING
+        // TODO: Networking
 
-                actionHandler.executeActions();
-
-                // TODO: send Action Queue to Clients if in Host mode.
-
-                world.step();   // physics
-                
-                // try rendering
-                try{
-
-                    ArrayList list = new ArrayList();
-
-                    for(int i = 0; i < actors.length; i++){
-                        if(actors[i] instanceof Drawable == true) list.add(actors[i]);
-                    }
-
-                    frame = gfx.render((Drawable[])list.toArray());
-                    
-                }
-                catch(Exception ex){
-                }
-
-            }
-
-            // try sleeping
-            try{
-                // TODO: limit fps
-                thread.sleep(7l);
-            }
-            catch(Exception ex){
+        // ACT
+        for(int i = 0; i < actors.size(); i++){
+            if(actors.get(i) instanceof Drawable){
+                Actor actor = (Actor)actors.get(i);
+                actor.act(container.getInput());
             }
         }
 
-        if(state == RESTART){
-            gameCore = new GameCore(gfx, world);
-        }
+        // PHYSICS
+        world.step();
+    }
 
+    @Override
+    public void render(GameContainer container, Graphics g) throws SlickException {
+        g.drawString("MOVE WITH LEFT-RIGHT, FLY WITH SPACE", 10, 30);
+        for(int i = 0; i < actors.size(); i++){
+            if(actors.get(i) instanceof Drawable){
+                Drawable drw = (Drawable)actors.get(i);
+                drw.draw(g);
+            }
+        }
+        
+    }
+
+    // START
+    public static void main(String[] args) {
+        try {
+            AppGameContainer app = new AppGameContainer(new GameCore());
+            app.setDisplayMode(1680, 1050, true);
+            app.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
