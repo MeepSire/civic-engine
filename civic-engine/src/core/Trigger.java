@@ -7,13 +7,12 @@ import core.actions.conditions.Condition;
 import core.actions.events.Event;
 import core.actions.events.EventListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Trigger implements EventListener {
 
-    private Event[] events = new Event[0];
-    private Action[] actions = new Action[0];
-    private Condition[] conditions = new Condition[0];
+    private ArrayList events = new ArrayList();
+    private ArrayList actions = new ArrayList();
+    private ArrayList conditions = new ArrayList();
 
     public Trigger(){
     }
@@ -31,64 +30,59 @@ public class Trigger implements EventListener {
     }
 
     public Event[] getEvents(){
-        return events;
+        Event[] ret = new Event[events.size()];
+        for(int i = 0; i < events.size(); i++){
+            ret[i] = (Event)events.get(i);
+        }
+        return ret;
     }
 
     public void addEvent(Event event){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(actions));
-        list.add(event);
-        events = (Event[])list.toArray();
+        events.add(event);
         event.addEventListener(this);
     }
 
     public void removeEvent(Event event){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(actions));
-        list.remove(event);
-        events = (Event[])list.toArray();
+        events.remove(event);
         event.removeEventListener(this);
     }
 
     public Action[] getActions(){
-        return actions;
+        Action[] ret = new Action[actions.size()];
+        for(int i = 0; i < actions.size(); i++){
+            ret[i] = (Action)actions.get(i);
+        }
+        return ret;
     }
 
     public void addAction(Action action){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(actions));
-        list.add(action);
-        actions = (Action[])list.toArray();
+        actions.add(action);
     }
 
     public void removeAction(Action action){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(actions));
-        list.remove(action);
-        actions = (Action[])list.toArray();
+        actions.remove(action);
     }
 
     public Condition[] getConditions(){
-        return conditions;
+        Condition[] ret = new Condition[conditions.size()];
+        for(int i = 0; i < conditions.size(); i++){
+            ret[i] = (Condition)conditions.get(i);
+        }
+        return ret;
     }
 
     public void addCondition(Condition condition){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(conditions));
-        list.add(condition);
-        conditions = (Condition[])list.toArray();
+        conditions.add(condition);
     }
 
     public void removeCondition(Condition condition){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(conditions));
-        list.remove(condition);
-        conditions = (Condition[])list.toArray();
+        conditions.remove(condition);
     }
 
     public boolean checkConditions(Event evt){
         // BY DEFAULT ALL CONDITIONS ARE CHECKED WITH "AND" OPERATOR
         boolean alltrue = true;
+        Condition[] conditions = this.getConditions();
         for(int i = 0; i < conditions.length; i++){
             if(conditions[i].check(evt) == false) alltrue = false;
         }
@@ -97,22 +91,22 @@ public class Trigger implements EventListener {
 
     public void run(Event evt){
         if(checkConditions(evt) == true){
-            for(int i = 0; i < actions.length; i++){
-                //GameCore.actionHandler.addToActionQueue(actions[i]);
+            for(int i = 0; i < actions.size(); i++){
+                GameCore.gamecore.getActionHandler().addToActionQueue((Action)actions.get(i));
             }
         }
     }
 
     public void runIgnoreConditions(){
-        for(int i = 0; i < actions.length; i++){
-            //GameCore.actionHandler.addToActionQueue(actions[i]);
+        for(int i = 0; i < actions.size(); i++){
+            GameCore.gamecore.getActionHandler().addToActionQueue((Action)actions.get(i));
         }
     }
 
     // TRIGGER WILL RUN IF ONE EVENT IS TRIGGERED
     public void eventTriggered(Event evt) {
-        for(int i = 0; i < events.length; i++){
-            if(events[i].equals(evt)){
+        for(int i = 0; i < events.size(); i++){
+            if(((Event)events.get(i)).equals(evt)){
                 run(evt);
             }
         }
