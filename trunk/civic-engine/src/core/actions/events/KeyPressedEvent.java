@@ -18,8 +18,9 @@ public class KeyPressedEvent extends Event {
 
     @Override
     public void trigger(){
-        for(int i = 0; i < listeners.length; i++){
-            listeners[i].eventTriggered(this);
+        for(int i = 0; i < listeners.size(); i++){
+            EventListener listener = (EventListener)listeners.get(i);
+            listener.eventTriggered(this);
         }
     }
 

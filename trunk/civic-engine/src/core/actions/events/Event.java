@@ -3,32 +3,28 @@
 package core.actions.events;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class Event {
 
-    protected static EventListener[] listeners = new EventListener[0];
+    protected static ArrayList listeners = new ArrayList();
+
+    private Event event;
 
     public Event(){
     }
 
     public static void addEventListener(EventListener listener){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(listeners));
-        list.add(listener);
-        listeners = (EventListener[])list.toArray();
+        listeners.add(listener);
     }
 
     public static void removeEventListener(EventListener listener){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(listeners));
-        list.remove(listener);
-        listeners = (EventListener[])list.toArray();
+        listeners.remove(listener);
     }
 
     public void trigger(){
-        for(int i = 0; i < listeners.length; i++){
-            listeners[i].eventTriggered(this);
+        for(int i = 0; i < listeners.size(); i++){
+            EventListener listener = (EventListener)listeners.get(i);
+            listener.eventTriggered(event);
         }
     }
 

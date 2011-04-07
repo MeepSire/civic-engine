@@ -105,11 +105,7 @@ public class Trigger implements EventListener {
 
     // TRIGGER WILL RUN IF ONE EVENT IS TRIGGERED
     public void eventTriggered(Event evt) {
-        for(int i = 0; i < events.size(); i++){
-            if(((Event)events.get(i)).equals(evt)){
-                run(evt);
-            }
-        }
+        run(evt);
     }
 
 }
