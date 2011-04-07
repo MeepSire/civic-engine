@@ -2,9 +2,8 @@
 
 package core.graphics;
 
-import core.exceptions.NoSuchAnimationException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
 
@@ -18,7 +17,6 @@ public class Sprite {
     public Sprite(SpriteSheet spriteSheet){
 
         this.spriteSheet = spriteSheet;
-        addAnimation(new Animation("NONE", this, 0, 0, 0, 0, 0, false));
 
     }
 
@@ -27,64 +25,31 @@ public class Sprite {
         flipV = vertical;
     }
 
-    public void addAnimation(Animation ani){
-        animation.add(ani);
-    }
-
-    public void removeAnimation(Animation ani){
-        animation.remove(ani);
-    }
-
-    public void setAnimation(String name) {
-        Animation ani = getAnimationForName(name);
+    public void setAnimation(Animation ani) {
         if(ani != null){
-            if(activeAnimation != null)activeAnimation.stop(); // STOP THE OLD ANIMATION
             activeAnimation = ani;
-            activeAnimation.start(); // START THE NEW ANIMATION
-        }
-        else{
-            System.out.println("No Such Animation");
-        }
-    }
-
-    public String[] getAnimationNames(){
-        ArrayList names = new ArrayList();
-
-        for(int i = 0; i < animation.size(); i++){
-            names.add(((Animation)animation.get(i)).getName());
-        }
-
-        return (String[])names.toArray();
-    }
-
-    public Animation[] getAnimations(){
-        Animation[] animations = new Animation[animation.size()];
-        for(int i = 0; i < animations.length; i++){
-            animations[i] = (Animation)animation.get(i);
-        }
-        return animations;
-    }
-
-    public Animation getActiveAnimation(){
-        return activeAnimation;
-    }
-
-    private Animation getAnimationForName(String name){
-        Animation[] animations = getAnimations();
-        for(int i = 0; i < animations.length; i++){
-            if(animations[i].getName().equals(name)){
-                return animations[i];
+            if(!activeAnimation.equals(ani)){
+                activeAnimation.start();                            // START THE NEW ANIMATION
             }
         }
-        return null;
+    }
+
+    public Animation getCurrentAnimation(){
+        return activeAnimation;
     }
 
     public SpriteSheet getSpriteSheet(){
         return spriteSheet;
     }
 
-    public Image getActiveFrame(){
-        return activeAnimation.getActiveFrame().getFlippedCopy(flipH, flipV);
+    public Image getCurrentFrame(){
+        if(activeAnimation != null){
+            activeAnimation.draw(-20000, -20000);
+            return activeAnimation.getCurrentFrame().getFlippedCopy(flipH, flipV);
+        }
+        else {
+            return null;
+        }
         //return spriteSheet.getSprite(0, 0);
     }
 

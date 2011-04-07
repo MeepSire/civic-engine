@@ -7,31 +7,29 @@ import java.util.Arrays;
 
 public class ActionHandler {
 
-    private Action[] actions = new Action[0];
+    private ArrayList actions = new ArrayList();
 
     public ActionHandler(){
     }
 
     public void executeActions(){
-        for(int i = 0; i < actions.length; i++){
-            actions[i].execute();
+        for(int i = 0; i < actions.size(); i++){
+            Action action = (Action)actions.get(i);
+            if(action != null)action.execute();
+            actions.remove(i);
         }
-        clearActionQueue();
     }
 
     public void addToActionQueue(Action action){
-        ArrayList list = new ArrayList();
-        list.addAll(Arrays.asList(actions));
-        list.add(action);
-        actions = (Action[])list.toArray();
-    }
-
-    private void clearActionQueue(){
-        actions = new Action[0];
+        actions.add(action);
     }
 
     public Action[] getActionQueue(){
-        return actions;
+        Action[] actionArray = new Action[actions.size()];
+        for(int i = 0; i < actions.size(); i++){
+            actionArray[i] = (Action)actions.get(i);
+        }
+        return actionArray;
     }
 
 }
