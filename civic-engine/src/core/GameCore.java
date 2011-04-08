@@ -21,8 +21,10 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.KeyListener;
 
-public class GameCore extends BasicGame implements CollisionListener, Runnable {
+public class GameCore extends BasicGame implements CollisionListener {
 
     public static GameCore gamecore;
 
@@ -32,11 +34,10 @@ public class GameCore extends BasicGame implements CollisionListener, Runnable {
     public static int width;
     public static int height;
 
-    private final Thread thread;
+    private static GameContainer ctr;
 
     public GameCore() {
         super("CiviC Game Core");
-        this.thread = new Thread(this);
         this.gamecore = this;
     }
 
@@ -63,6 +64,8 @@ public class GameCore extends BasicGame implements CollisionListener, Runnable {
         world = new World(new Vector2f(0, (float) 50), 100);
 
         this.world.addListener(gamecore);
+        container.getInput().addListener(this);
+        ctr = container;
 
         new Mario(200, 100); // NEW MARIO IS AUTOMATICALLY ADDED TO ACTORS AND WORLD
 
@@ -71,18 +74,21 @@ public class GameCore extends BasicGame implements CollisionListener, Runnable {
 
         for(int x = width/3; x <= (width/3) * 2; x += 16){
             new ItemBox((float)x, height - 100);
-            x += 1;
+            x += 0;
         }
-
-        thread.start();
 
     }
 
     @Override
     public void update(GameContainer container, int delta) throws SlickException {
 
+        ctr = container;
+
         // NETWORKING
         // TODO: Networking
+
+        // PHYSICS
+        world.step();
 
         // EXECUTE TRIGGERED ACTIONS
         handler.executeActions();
@@ -100,6 +106,8 @@ public class GameCore extends BasicGame implements CollisionListener, Runnable {
     @Override
     public void render(GameContainer container, Graphics g) throws SlickException {
 
+        ctr = container;
+
         g.drawString("MOVE WITH LEFT-RIGHT, JUMP WITH SPACE", 10, 30);
         g.drawString("N: RESET POSITION", 10, 50);
         g.drawString("I: NEW BOX", 10, 70);
@@ -110,7 +118,8 @@ public class GameCore extends BasicGame implements CollisionListener, Runnable {
                 drw.draw(g);
                 if(actors.get(i) instanceof Mario){
                     Mario mario = (Mario)actors.get(i);
-                    g.drawString("POSITION: " + mario.getBody().getPosition().getX() + ", " + mario.getBody().getPosition().getY(), 10, 110);
+                    g.drawString("POSITION: " + Math.round(mario.getBody().getPosition().getX()) + ", " + Math.round(mario.getBody().getPosition().getY()), 10, 110);
+                    g.drawString("VELOCITY: " + Math.round(mario.getBody().getVelocity().getX()) + ", " + Math.round(mario.getBody().getVelocity().getY()), 10, 130);
                 }
             }
         }
@@ -132,28 +141,6 @@ public class GameCore extends BasicGame implements CollisionListener, Runnable {
         new PhysicsCollisionEvent(evt).trigger();
     }
 
-    public void run() {
-
-        Timer timer = new Timer();
-
-        while(true){
-
-            timer.start();
-
-            // PHYSICS
-            world.step();
-            
-            try {
-                long sleepTime = 3 - timer.stop();
-                if(sleepTime < 0) sleepTime = 0;
-                thread.sleep(sleepTime);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GameCore.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-    }
-    
     private class Timer {
         
         private long startTime;

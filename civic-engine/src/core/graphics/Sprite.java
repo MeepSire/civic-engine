@@ -12,7 +12,7 @@ public class Sprite {
     private final SpriteSheet spriteSheet;
     private ArrayList animation = new ArrayList();
     private Animation activeAnimation;
-    private boolean flipH, flipV = false;
+    public boolean flipH, flipV = false;
 
     public Sprite(SpriteSheet spriteSheet){
 
