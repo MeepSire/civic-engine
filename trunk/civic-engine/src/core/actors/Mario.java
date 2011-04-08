@@ -28,8 +28,8 @@ public class Mario extends PhysicsActor {
     public Animation JUMP = new Animation(sprite.getSpriteSheet(), 1, 0, 1, 0, false, 1, false);
     public Animation FALL = new Animation(sprite.getSpriteSheet(), 2, 0, 2, 0, false, 1, false);
 
-    private boolean jumping = false;
     private boolean walking = false;
+    private boolean jumping = false;
 
     public Trigger resetJump;
 
@@ -40,18 +40,12 @@ public class Mario extends PhysicsActor {
         // ANIMATIONS
         body.setRotatable(false);
 
-        // FOR JUMP ACTION
-        resetJump = new Trigger();
-        resetJump.addEvent(new PhysicsCollisionEvent(null));                  // LISTEN FOR COLLISIONS
-        resetJump.addCondition(new PhysicsCollisionCondition(this, true));    // IF MARIO COLLIDES
-        resetJump.addAction(new ResetJumpAction());                           // RESET JUMP
-
     }
 
     public void act(Input input) {
 
         getSprite().setAnimation(STAND);
-
+        
         // WALK LEFT
         if(input.isKeyDown(Input.KEY_LEFT)){
 
@@ -59,12 +53,8 @@ public class Mario extends PhysicsActor {
 
             getSprite().setAnimation(WALK);
 
-            getBody().setDamping(0);
+            getBody().move((float) (getBody().getPosition().getX() - 1), getBody().getPosition().getY());
             
-            getBody().addForce(new Vector2f(-300, 0));
-
-            walking = true;
-
         }
 
         // WALK RIGHT
@@ -74,35 +64,12 @@ public class Mario extends PhysicsActor {
  
             getSprite().setAnimation(WALK);
 
-            getBody().setDamping(0);
-
-            getBody().addForce(new Vector2f(300, 0));
-
-            walking = true;
+            getBody().move((float) (getBody().getPosition().getX() + 1), getBody().getPosition().getY());
 
         }
 
-        // STOP WALKING
-        if(!(input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_LEFT)) && walking == true){
-
-            if(Math.abs(getBody().getVelocity().getY()) <= 10 && jumping == false ){
-                getBody().setDamping(2);
-            }
-
-            if(Math.abs(getBody().getVelocity().getX()) <= 10){
-
-                getBody().setDamping(0);
-                walking = false;
-                
-            }
-
-        }
-
-        if(input.isKeyPressed(Input.KEY_SPACE) && jumping == false){
-
-            jumping = true;
-
-            getBody().setDamping(0);
+        // JUMP
+        if(input.isKeyPressed(Input.KEY_SPACE) && Math.round(getBody().getVelocity().getY()) == 0 ) {
 
             getBody().addForce(new Vector2f(0, -150000));
 
@@ -124,29 +91,12 @@ public class Mario extends PhysicsActor {
 
         }
 
-        if(Math.abs(body.getVelocity().getY()) >= 10){
+        if(Math.abs(body.getVelocity().getY()) >= 5){
             if(body.getVelocity().getY() > 0){
                 getSprite().setAnimation(FALL);
             }else{
                 getSprite().setAnimation(JUMP);
             }
-        }
-
-    }
-
-    private class ResetJumpAction extends Action {
-
-        public ResetJumpAction(){
-        }
-
-        @Override
-        public void execute(){
-            jumping = false;
-        }
-
-        @Override
-        public String toString(){
-            return "Mario: Reset Jump Action";
         }
 
     }
