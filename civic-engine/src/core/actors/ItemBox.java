@@ -21,7 +21,7 @@ public class ItemBox extends StaticPhysicsActor {
 
         super(x, y, new Sprite(new SpriteSheet(new Image("images/box.png"), 16, 16)), new Body("ItemBox", new Box(16, 16), (float) 20.0));
         getSprite().setAnimation(STAND);
-        getBody().setRotatable(true);
+        getBody().setRotatable(false);
 
     }
 

@@ -16,6 +16,7 @@ import net.phys2d.raw.CollisionListener;
 import net.phys2d.raw.World;
 
 // SLICK
+import net.phys2d.raw.strategies.QuadSpaceStrategy;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -61,13 +62,13 @@ public class GameCore extends BasicGame implements CollisionListener {
     public void init(GameContainer container) throws SlickException {
 
         // MUST FIRST CREATE THE WORLD BEFORE ADDING ACTORS!
-        world = new World(new Vector2f(0, (float) 50), 100);
+        world = new World(new Vector2f(0, (float) 10.0), 5, new QuadSpaceStrategy(20,5));
 
         this.world.addListener(gamecore);
         container.getInput().addListener(this);
         ctr = container;
 
-        new Mario(200, 100); // NEW MARIO IS AUTOMATICALLY ADDED TO ACTORS AND WORLD
+        new Mario(500, 100); // NEW MARIO IS AUTOMATICALLY ADDED TO ACTORS AND WORLD
 
         width = container.getWidth();
         height = container.getHeight();
@@ -99,6 +100,22 @@ public class GameCore extends BasicGame implements CollisionListener {
                 Actor actor = (Actor)actors.get(i);
                 actor.act(container.getInput());
             }
+        }
+
+        globalInputAction(container.getInput());
+
+    }
+
+    protected void globalInputAction(Input input){
+
+        if(input.isKeyPressed(Input.KEY_I)){
+
+            try {
+                new EmptyItemBox(GameCore.width / 2, 0);
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }

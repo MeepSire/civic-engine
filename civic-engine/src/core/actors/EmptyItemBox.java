@@ -28,7 +28,7 @@ public class EmptyItemBox extends PhysicsActor {
 
         getSprite().setAnimation(STAND);
 
-        body.setRotDamping((float) 0.0);
+        body.setRotDamping((float) -1);
         body.setRotatable(true);
 
     }
