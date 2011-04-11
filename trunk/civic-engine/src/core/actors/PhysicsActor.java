@@ -5,7 +5,10 @@ package core.actors;
 import core.*;
 import core.graphics.Sprite;
 import core.interfaces.Drawable;
+import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
+import net.phys2d.raw.shapes.Box;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
@@ -43,8 +46,15 @@ public abstract class PhysicsActor extends Actor implements Drawable {
 
         if(sprite.getCurrentAnimation() != null){
             Image img = sprite.getCurrentFrame();
-            img.rotate(img.getRotation());
+
+            double rot = getBody().getRotation() * (180/Math.PI);
+
+            img.rotate((float) rot);
+
             img.draw(body.getPosition().getX() - body.getShape().getBounds().getWidth()/2, body.getPosition().getY() - body.getShape().getBounds().getHeight()/2 );
+
+            img.rotate ((float)-rot);
+            
         }
 
     }
