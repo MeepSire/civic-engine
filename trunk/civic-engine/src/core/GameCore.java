@@ -23,7 +23,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.KeyListener;
 
 public class GameCore extends BasicGame implements CollisionListener {
 
@@ -56,13 +55,17 @@ public class GameCore extends BasicGame implements CollisionListener {
 
     public void removeActor(Actor actor){
         actors.remove(actor);
+        actor = null;
     }
 
     @Override
     public void init(GameContainer container) throws SlickException {
 
+        //container.setMinimumLogicUpdateInterval(25);
+        container.setMaximumLogicUpdateInterval(100);
+
         // MUST FIRST CREATE THE WORLD BEFORE ADDING ACTORS!
-        world = new World(new Vector2f(0, (float) 10.0), 5, new QuadSpaceStrategy(20,5));
+        world = new World(new Vector2f(0, (float) 50.0), 5, new QuadSpaceStrategy(20,5));
 
         this.world.addListener(gamecore);
         container.getInput().addListener(this);
@@ -74,7 +77,7 @@ public class GameCore extends BasicGame implements CollisionListener {
         height = container.getHeight();
 
         for(int x = width/3; x <= (width/3) * 2; x += 16){
-            new ItemBox((float)x, height - 100);
+            new ItemBox((float)x, height - 100).getBody().setRestitution(2);
             x += 0;
         }
 
@@ -99,6 +102,9 @@ public class GameCore extends BasicGame implements CollisionListener {
             if(actors.get(i) instanceof Drawable){
                 Actor actor = (Actor)actors.get(i);
                 actor.act(container.getInput());
+                if (((Actor)actors.get(i)).isDeleteable()){
+                    removeActor((Actor)actors.get(i));
+                }
             }
         }
 
@@ -108,10 +114,20 @@ public class GameCore extends BasicGame implements CollisionListener {
 
     protected void globalInputAction(Input input){
 
-        if(input.isKeyPressed(Input.KEY_I)){
+        if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
 
             try {
-                new EmptyItemBox(GameCore.width / 2, 0);
+                new EmptyItemBox(input.getMouseX(), input.getMouseY());
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+        if(input.isMousePressed(Input.MOUSE_RIGHT_BUTTON)){
+
+            try {
+                new ItemBox((int)(input.getMouseX()/16)*16, (int)(input.getMouseY()/16)*16);
             } catch (SlickException ex) {
                 Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -127,7 +143,7 @@ public class GameCore extends BasicGame implements CollisionListener {
 
         g.drawString("MOVE WITH LEFT-RIGHT, JUMP WITH SPACE", 10, 30);
         g.drawString("N: RESET POSITION", 10, 50);
-        g.drawString("I: NEW BOX", 10, 70);
+        g.drawString("MOUSE KLICK: NEW BOX", 10, 70);
 
         for(int i = 0; i < actors.size(); i++){
             if(actors.get(i) instanceof Drawable){
@@ -147,7 +163,8 @@ public class GameCore extends BasicGame implements CollisionListener {
     public static void main(String[] args) {
         try {
             AppGameContainer app = new AppGameContainer(new GameCore());
-            app.setDisplayMode(1680, 1050, true);
+            app.setDisplayMode(1280, 800, true);
+            app.setVSync(true);
             app.start();
         } catch (Exception e) {
             e.printStackTrace();

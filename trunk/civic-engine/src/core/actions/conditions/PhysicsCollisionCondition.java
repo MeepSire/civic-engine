@@ -2,6 +2,7 @@
 
 package core.actions.conditions;
 
+import core.Actor;
 import core.actions.events.*;
 import core.actors.PhysicsActor;
 
@@ -20,6 +21,10 @@ public class PhysicsCollisionCondition extends Condition {
         this.actor1 = actor1;
         this.actor2 = actor2;
         this.bool = bool;
+    }
+
+    public PhysicsActor[] getActors(){
+        return new PhysicsActor[]{actor1, actor2};
     }
 
     @Override

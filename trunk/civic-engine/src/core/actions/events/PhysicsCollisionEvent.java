@@ -2,14 +2,26 @@
 
 package core.actions.events;
 
+import net.phys2d.raw.Body;
 import net.phys2d.raw.CollisionEvent;
 
 public class PhysicsCollisionEvent extends Event {
 
     public CollisionEvent evt;
+    private Body body1,body2;
 
     public PhysicsCollisionEvent(CollisionEvent evt){
         this.evt = evt;
+        if(evt!=null)body1=evt.getBodyA();
+        if(evt!=null)body2=evt.getBodyB();
+    }
+
+    public Body getBodyA(){
+        return body1;
+    }
+    
+    public Body getBodyB(){
+        return body2;
     }
 
     @Override
