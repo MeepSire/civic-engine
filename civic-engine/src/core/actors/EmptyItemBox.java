@@ -5,7 +5,9 @@
 
 package core.actors;
 
+import core.GameCore;
 import core.graphics.Sprite;
+import core.interfaces.Actable;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.shapes.*;
 import org.newdawn.slick.Animation;
@@ -16,7 +18,8 @@ import org.newdawn.slick.SpriteSheet;
 
 // @author: Philipp Jean-Jacques
 
-public class EmptyItemBox extends PhysicsActor {
+public class EmptyItemBox extends PhysicsActor implements Actable{
+
 
     protected Sprite sprite = new Sprite(new SpriteSheet(new Image("images/box.png"), 16, 16));
 
@@ -34,7 +37,17 @@ public class EmptyItemBox extends PhysicsActor {
     }
 
     public void act(Input input) {
-        // CANNOT ACT
+        if(!insideScreen()){
+            delete();
+        }
+    }
+
+    public boolean insideScreen(){
+        boolean s = false;
+        if(body.getPosition().getX()>0&&body.getPosition().getX()<GameCore.width&&body.getPosition().getY()>0&&body.getPosition().getY()<GameCore.height){
+            s = true;
+        }
+        return s;
     }
 
 }

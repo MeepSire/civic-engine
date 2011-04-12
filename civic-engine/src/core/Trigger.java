@@ -13,6 +13,7 @@ public class Trigger implements EventListener {
     private ArrayList events = new ArrayList();
     private ArrayList actions = new ArrayList();
     private ArrayList conditions = new ArrayList();
+    private Event triggeredEvent = null;
 
     public Trigger(){
     }
@@ -103,8 +104,13 @@ public class Trigger implements EventListener {
         }
     }
 
+    public Event getTriggeredEvent(){
+        return triggeredEvent;
+    }
+
     // TRIGGER WILL RUN IF ONE EVENT IS TRIGGERED
     public void eventTriggered(Event evt) {
+        triggeredEvent = evt;
         run(evt);
     }
 

@@ -22,6 +22,7 @@ public class ActionHandler {
 
     public void addToActionQueue(Action action){
         actions.add(action);
+       
     }
 
     public Action[] getActionQueue(){

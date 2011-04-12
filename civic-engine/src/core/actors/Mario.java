@@ -84,6 +84,25 @@ public class Mario extends PhysicsActor {
 
         }
 
+        //SHOOT
+        if(input.isKeyPressed(Input.KEY_X)){
+            
+            int dir = 1;
+            
+            if(this.getSprite().flipH){
+                dir = -1;
+            }
+
+            try {
+                Fire box = new Fire(getBody().getPosition().getX()+dir*16, getBody().getPosition().getY());
+                box.getBody().addForce(new Vector2f(dir*1000000,-1000000));
+                box.getBody().setRotation((float)(Math.random()*180/Math.PI));
+                box.getBody().setRestitution(1);
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
         // JUMP/FALL ANIMATION
         if(Math.abs(body.getVelocity().getY()) >= 1){
             if(body.getVelocity().getY() > 0){
