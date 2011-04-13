@@ -5,6 +5,9 @@ package core.actors;
 // CIVIC
 import core.GameCore;
 import core.Trigger;
+import core.actions.Action;
+import core.actions.conditions.PhysicsCollisionCondition;
+import core.actions.events.PhysicsCollisionEvent;
 import core.graphics.Sprite;
 
 // JAVA SE 6
@@ -37,10 +40,17 @@ public class Mario extends PhysicsActor {
 
     public Mario(float x, float y) throws SlickException {
 
-        super(x, y, new Sprite(new SpriteSheet(new Image("images/mario.png"), 24, 24)), new Body("Mario", new Box(16, 24), (float) 100.0));
+        super(x, y, new Sprite(new SpriteSheet(new Image("images/mario.png"), 24, 24)), new Body("Mario", new Box(16, 24), (float) 10.0));
 
         // ANIMATIONS
-        body.setRotatable(false);
+        body.setRotatable(true);
+        body.setRestitution(1);
+
+        // TRIGGA
+        resetJump = new Trigger();
+        resetJump.addEvent(new PhysicsCollisionEvent(null));
+        resetJump.addCondition(new PhysicsCollisionCondition(this,true));
+        resetJump.addAction(new ResetRotation());
 
     }
 
@@ -55,7 +65,7 @@ public class Mario extends PhysicsActor {
 
             getSprite().setAnimation(WALK);
 
-            getBody().move((float) (getBody().getPosition().getX() - 1), getBody().getPosition().getY());
+            getBody().move((float) (getBody().getPosition().getX() - 5), getBody().getPosition().getY());
             
         }
 
@@ -66,14 +76,14 @@ public class Mario extends PhysicsActor {
  
             getSprite().setAnimation(WALK);
 
-            getBody().move((float) (getBody().getPosition().getX() + 1), getBody().getPosition().getY());
+            getBody().move((float) (getBody().getPosition().getX() + 5), getBody().getPosition().getY());
 
         }
 
         // JUMP
         if(input.isKeyPressed(Input.KEY_SPACE) && Math.round(getBody().getVelocity().getY()) == 0 ) {
 
-            getBody().addForce(new Vector2f(0, -450000));
+            getBody().addForce(new Vector2f(0, -200000));
 
         }
 
@@ -95,7 +105,7 @@ public class Mario extends PhysicsActor {
 
             try {
                 Fire box = new Fire(getBody().getPosition().getX()+dir*16, getBody().getPosition().getY());
-                box.getBody().addForce(new Vector2f(dir*1000000,-1000000));
+                box.getBody().addForce(new Vector2f(dir*100000,-100000));
                 box.getBody().setRotation((float)(Math.random()*180/Math.PI));
                 box.getBody().setRestitution(1);
             } catch (SlickException ex) {
@@ -112,10 +122,21 @@ public class Mario extends PhysicsActor {
             }
         }
 
-        // NEW PHYSICS OBJECTS
+        // RESET POSITION
         if(input.isKeyPressed(Input.KEY_N)){
 
-            setPosition(GameCore.width/2,0);
+            getBody().move(GameCore.width/2,GameCore.height/2);
+
+        }
+
+        // PUT TILE
+        if(input.isKeyPressed(Input.KEY_P)){
+
+            try {
+                new ItemBox(getBody().getPosition().getX(), getBody().getPosition().getY());
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         }
 
@@ -130,6 +151,21 @@ public class Mario extends PhysicsActor {
 
             getBody().setShape(new Box(16, 24));
 
+        }
+
+    }
+
+    private class ResetRotation extends Action {
+
+        @Override
+        public void execute(){
+            
+            PhysicsCollisionEvent pce = (PhysicsCollisionEvent)resetJump.getTriggeredEvent();
+
+            if(pce.getTypeA().equals("ItemBox") || pce.getTypeB().equals("ItemBox")){
+                getBody().setRotation(0);
+            }
+            
         }
 
     }
