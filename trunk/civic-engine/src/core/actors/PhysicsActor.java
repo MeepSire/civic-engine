@@ -16,9 +16,12 @@ public abstract class PhysicsActor extends Actor implements Drawable {
 
     protected Body body;
     protected Sprite sprite;
+    protected int bodyid;
+
 
     public PhysicsActor(float x, float y, Sprite sprite, Body body){
         super(x, y);
+        this.bodyid = body.getID();
         this.body = body;
         this.sprite = sprite;
         setPosition(x,y);

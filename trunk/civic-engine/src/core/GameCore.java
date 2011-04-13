@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.phys2d.math.Vector2f;
+import net.phys2d.raw.Body;
 import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.CollisionListener;
 import net.phys2d.raw.World;
@@ -55,6 +56,10 @@ public class GameCore extends BasicGame implements CollisionListener {
 
     public void removeActor(Actor actor){
         actors.remove(actor);
+        if(actor instanceof PhysicsActor) {
+            PhysicsActor physicsActor = (PhysicsActor) actor;
+            world.remove(physicsActor.getBody());
+        }
         actor = null;
     }
 
@@ -65,7 +70,7 @@ public class GameCore extends BasicGame implements CollisionListener {
         container.setMaximumLogicUpdateInterval(100);
 
         // MUST FIRST CREATE THE WORLD BEFORE ADDING ACTORS!
-        world = new World(new Vector2f(0, (float) 50.0), 5, new QuadSpaceStrategy(20,5));
+        world = new World(new Vector2f(0, (float) 500.0), 5, new QuadSpaceStrategy(20,5));
 
         this.world.addListener(gamecore);
         container.getInput().addListener(this);
@@ -77,7 +82,7 @@ public class GameCore extends BasicGame implements CollisionListener {
         height = container.getHeight();
 
         for(int x = width/3; x <= (width/3) * 2; x += 16){
-            new ItemBox((float)x, height - 100).getBody().setRestitution(2);
+            new ItemBox((float)x, height - 100).getBody();
             x += 0;
         }
 
@@ -99,6 +104,11 @@ public class GameCore extends BasicGame implements CollisionListener {
 
         // ACT
         for(int i = 0; i < actors.size(); i++){
+            if(actors.get(i) instanceof PhysicsActor){
+                if(((PhysicsActor)actors.get(i)).getBody().getPosition().distance(new Vector2f(0,0)) > 10000){
+                    ((PhysicsActor)actors.get(i)).delete();
+                }
+            }
             if(actors.get(i) instanceof Drawable){
                 Actor actor = (Actor)actors.get(i);
                 actor.act(container.getInput());
@@ -117,7 +127,7 @@ public class GameCore extends BasicGame implements CollisionListener {
         if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
 
             try {
-                new EmptyItemBox(input.getMouseX(), input.getMouseY());
+                new EmptyItemBox(input.getMouseX() + 8, input.getMouseY() + 8);
             } catch (SlickException ex) {
                 Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -127,7 +137,17 @@ public class GameCore extends BasicGame implements CollisionListener {
         if(input.isMousePressed(Input.MOUSE_RIGHT_BUTTON)){
 
             try {
-                new ItemBox((int)(input.getMouseX()/16)*16, (int)(input.getMouseY()/16)*16);
+                new ItemBox((int)((input.getMouseX()+8)/16)*16, (int)((input.getMouseY()+8)/16)*16);
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+        if(input.isMousePressed(Input.MOUSE_MIDDLE_BUTTON)){
+
+            try {
+                new Mario((int)((input.getMouseX()+8)/16)*16, (int)((input.getMouseY()+8)/16)*16);
             } catch (SlickException ex) {
                 Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -145,6 +165,8 @@ public class GameCore extends BasicGame implements CollisionListener {
         g.drawString("N: RESET POSITION", 10, 50);
         g.drawString("MOUSE KLICK: NEW BOX", 10, 70);
 
+        ArrayList phslst = new ArrayList();
+
         for(int i = 0; i < actors.size(); i++){
             if(actors.get(i) instanceof Drawable){
                 Drawable drw = (Drawable)actors.get(i);
@@ -154,16 +176,32 @@ public class GameCore extends BasicGame implements CollisionListener {
                     g.drawString("POSITION: " + Math.round(mario.getBody().getPosition().getX()) + ", " + Math.round(mario.getBody().getPosition().getY()), 10, 110);
                     g.drawString("VELOCITY: " + Math.round(mario.getBody().getVelocity().getX()) + ", " + Math.round(mario.getBody().getVelocity().getY()), 10, 130);
                 }
+                if(actors.get(i) instanceof PhysicsActor){
+                    phslst.add(actors.get(i));
+                }
             }
         }
-        
+        g.drawString("Physics Actors: " + phslst.size(), 10, 150);
+        phslst = null;
+    }
+
+    public World getWorld(){
+        return world;
+    }
+
+    public Actor[] getActors(){
+        Actor[] actor = new Actor[actors.size()];
+        for(int i = 0; i < actor.length; i++){
+            actor[i] = (Actor)actors.get(i);
+        }
+        return actor;
     }
 
     // START
     public static void main(String[] args) {
         try {
             AppGameContainer app = new AppGameContainer(new GameCore());
-            app.setDisplayMode(1280, 800, true);
+            app.setDisplayMode(1680, 1050, true);
             app.setVSync(true);
             app.start();
         } catch (Exception e) {
