@@ -6,7 +6,7 @@
 
 package utils;
 
-class Part {
+public class Part {
 
         public Part[] part= new Part[9999];
         private int parts = 0;

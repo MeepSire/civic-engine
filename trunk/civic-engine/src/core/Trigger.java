@@ -30,6 +30,18 @@ public class Trigger implements EventListener {
         }
     }
 
+    public Trigger(Event events, Action actions, Condition conditions){
+        //for(int i = 0; i < events.length; i++){
+            if(events!=null)addEvent(events);
+        //}
+        //for(int i = 0; i < actions.length; i++){
+            if(actions!=null)addAction(actions);
+        //}
+        //for(int i = 0; i < conditions.length; i++){
+            if(conditions!=null)addCondition(conditions);
+        //}
+    }
+
     public Event[] getEvents(){
         Event[] ret = new Event[events.size()];
         for(int i = 0; i < events.size(); i++){
