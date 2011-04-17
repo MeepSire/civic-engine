@@ -36,7 +36,7 @@ public java.lang.String[] find(java.lang.String[] node)
 finds all values of a given path in your EasyXml 
 
 Parameters:
-node - array of nodes(Strings) that act like a path to the item you want to find (eg: new String[]{"person","age"} as node finds all items under [...]person[...]age) 
+node - array of nodes(Strings) that act like a path to the item you want to find (eg: new String[]{"person","age"} as node finds all items under ..person..age) 
 Returns:
 returns an array of all found items(as Strings) with the given node path
 == find==
