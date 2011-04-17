@@ -50,7 +50,7 @@ returns the added Part
 == addPart==
 public Part addPart(java.lang.String name,
                     java.lang.String info)
-dds another Part to this one 
+adds another Part to this one 
 
 Parameters:
 name - name of the Part to add
