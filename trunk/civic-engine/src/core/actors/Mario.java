@@ -39,9 +39,9 @@ public class Mario extends PhysicsActor {
     public Trigger resetJump;
 
     public Mario(float x, float y) throws SlickException {
-
         super(x, y, new Sprite(new SpriteSheet(new Image("images/mario.png"), 24, 24)), new Body("Mario", new Box(16, 24), (float) 10.0));
-
+        
+        System.out.println("Mario created!");
         // ANIMATIONS
         body.setRotatable(true);
         body.setRestitution(1);
