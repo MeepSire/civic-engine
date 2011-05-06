@@ -28,12 +28,12 @@ public class EmptyItemBox extends PhysicsActor implements Actable {
 
     public EmptyItemBox(float x, float y) throws SlickException {
         
-        super(x, y, new Sprite(new SpriteSheet(new Image("images/box.png"), 16, 16)), new Body("Box", new Box(16, 16), (float) 2.0));
+        super(x, y, new Sprite(new SpriteSheet(new Image("images/box.png"), 16, 16)), new Body("Box", new Box(16,16), (float) 2.0));
 
         getSprite().setAnimation(STAND);
 
         body.setRotatable(true);
-        body.setRestitution(1);
+        body.setRestitution(.6f);
 
     }
 

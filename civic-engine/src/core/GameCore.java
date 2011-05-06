@@ -5,12 +5,14 @@ import core.actions.ActionHandler;
 import core.actions.events.PhysicsCollisionEvent;
 import core.actors.*;
 import core.interfaces.*;
+import utils.EasyXml;
+import utils.Part;
 
 // PHYS2D
+import net.phys2d.raw.strategies.QuadSpaceStrategy;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -18,13 +20,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import net.phys2d.math.Vector2f;
-import net.phys2d.raw.Body;
 import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.CollisionListener;
 import net.phys2d.raw.World;
 
 // SLICK
-import net.phys2d.raw.strategies.QuadSpaceStrategy;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -32,13 +32,12 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Input;
-import utils.EasyXml;
-import utils.Part;
 
 public class GameCore extends BasicGame implements CollisionListener {
 
     public static GameCore gamecore;
 
+    private int mouseButton=-1;
     private World world;
     private ArrayList actors = new ArrayList();
     private ActionHandler handler = new ActionHandler();
@@ -50,7 +49,9 @@ public class GameCore extends BasicGame implements CollisionListener {
     public GameCore() {
         super("CiviC Game Core");
         this.gamecore = this;
-        setIcon("images/icon.png");
+        setIcon("images/iconC.png");
+        //setIcon(new String[]{"images/128.png","images/32.png","images/16.png"});
+        new EasyXml("test");
     }
 
     public ActionHandler getActionHandler(){
@@ -77,7 +78,7 @@ public class GameCore extends BasicGame implements CollisionListener {
     @Override
     public void init(GameContainer container) throws SlickException {
 
-        container.setMinimumLogicUpdateInterval(25);
+        //container.setMinimumLogicUpdateInterval(25);
         container.setMaximumLogicUpdateInterval(100);
 
         // MUST FIRST CREATE THE WORLD BEFORE ADDING ACTORS!
@@ -93,10 +94,72 @@ public class GameCore extends BasicGame implements CollisionListener {
         new Mario(width/2, 100);
 
         for(int x = width/3; x <= (width/3) * 2; x += 16){
-            new ItemBox((float)x, height - 100).getBody();
+            new ItemBox((float)x, height - 100);
             x += 0;
         }
 
+        //new Updater(this);
+
+    }
+
+    @Override
+    public void keyPressed(int i, char c){
+        if(c == 'i'){
+            try {
+                new EmptyItemBox(100f, 100f);
+            } catch (SlickException ex) {
+            }
+        }
+    }
+
+    @Override
+    public void mouseDragged(int i, int i1, int i2, int i3) {
+        if(mouseButton==0){
+
+            try {
+                new EmptyItemBox(i + 8, i1 + 8);
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }
+
+    @Override
+    public void mouseReleased(int i, int i1, int i2){
+        mouseButton = -1;
+    }
+
+    @Override
+    public void mousePressed(int i, int i1, int i2) {
+        mouseButton = i;
+        if(i==0){
+
+            try {
+                new EmptyItemBox(i1 + 8, i2 + 8);
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        if(i==1){
+
+            try {
+                new ItemBox((int)((i1+8)/16)*16, (int)((i2+8)/16)*16);
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        if(i==2){
+
+            try {
+                new Mario((int)((i1/16)*16), (int)((i2+8)/16)*16);
+            } catch (SlickException ex) {
+                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
     }
 
     @Override
@@ -135,42 +198,15 @@ public class GameCore extends BasicGame implements CollisionListener {
 
     protected void globalInputAction(Input input) throws SlickException{
 
-        if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
-
-            try {
-                new EmptyItemBox(input.getMouseX() + 8, input.getMouseY() + 8);
-            } catch (SlickException ex) {
-                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-
+        
+        /*
         if(input.isKeyPressed(Input.KEY_S)){
             save("C:\\test.xml",true);
         }
         if(input.isKeyPressed(Input.KEY_L)){
             load("C:\\test.xml",true);
         }
-
-        if(input.isMousePressed(Input.MOUSE_RIGHT_BUTTON)){
-
-            try {
-                new ItemBox((int)((input.getMouseX()+8)/16)*16, (int)((input.getMouseY()+8)/16)*16);
-            } catch (SlickException ex) {
-                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-
-        if(input.isMousePressed(Input.MOUSE_MIDDLE_BUTTON)){
-
-            try {
-                new Mario((int)((input.getMouseX()+8)/16)*16, (int)((input.getMouseY()+8)/16)*16);
-            } catch (SlickException ex) {
-                Logger.getLogger(Mario.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
+        */
 
     }
 
@@ -219,9 +255,8 @@ public class GameCore extends BasicGame implements CollisionListener {
     public static void main(String[] args) {
         try {
             AppGameContainer app = new AppGameContainer(new GameCore());
-            app.setDisplayMode(640, 480, true);
-            app.setFullscreen(false);
-            app.setVSync(true);
+            app.setDisplayMode(640, 480, false);
+            //app.setVSync(false);
             app.start();
             //app.setTargetFrameRate(100);
         } catch (Exception e) {
@@ -299,27 +334,63 @@ public class GameCore extends BasicGame implements CollisionListener {
         }
         return save.save(url);
     }
-
-    private void setIcon(String url){
-        Display.setIcon(loadIcon(url));
+/**
+ * Sets the game and Tray Icon
+ * @param urls path to the 3 icons(as images): String[]{128x128 imageurl, 32x32 imageurl, 16x16 imageurl}
+ */
+    private void setIcon(String[] urls) //String[]{128x128 imageurl, 32x32 imageurl, 16x16 imageurl}
+    {
+        try{
+            Display.setIcon(loadIcon(urls));
+        }catch(Exception e){
+            System.err.println("Error[0]:failed to set icon!");
+        }
+    }
+/**
+ * Sets the game and Tray Icon
+ * @param url path to one image of which the 3 differently sized icons are created automatically
+ */
+    private void setIcon(String url) //128x128 image, 32x32 image, 16x16 image created from one imageurl
+    {
+        setIcon(new String[] {url});
     }
 
-    public static ByteBuffer[] loadIcon(String filepath)
+    public static ByteBuffer[] loadIcon(String[] filepath)
 	{
+            ByteBuffer[] buffers = new ByteBuffer[3];
+            if(filepath.length==1){
 		BufferedImage image = null;
 		try
 		{
-			image = ImageIO.read(new File(filepath));
+			image = ImageIO.read(new File(filepath[0]));
 		}
 		catch (IOException e)
 		{
-			//e.printStackTrace();
+			System.err.println("Error[1]:couldnt load icon image "+filepath[0]);
 		}
-		ByteBuffer[] buffers = new ByteBuffer[3];
 		buffers[0] = loadIconInstance(image, 128);
 		buffers[1] = loadIconInstance(image, 32);
 		buffers[2] = loadIconInstance(image, 16);
 		return buffers;
+            }else{
+                BufferedImage image0 = null;
+                BufferedImage image1 = null;
+                BufferedImage image2 = null;
+                try
+		{
+			image0 = ImageIO.read(new File(filepath[0]));
+                        image1 = ImageIO.read(new File(filepath[1]));
+                        image2 = ImageIO.read(new File(filepath[2]));
+		}
+		catch (IOException e)
+		{
+			System.err.println("Error[1]:couldnt load icon image "+filepath[0]);
+		}
+		buffers[0] = loadIconInstance(image0, 128);
+		buffers[1] = loadIconInstance(image1, 32);
+		buffers[2] = loadIconInstance(image2, 16);
+                return buffers;
+            }
 	}
 
 	private static ByteBuffer loadIconInstance(BufferedImage image, int dimension)
@@ -373,5 +444,27 @@ public class GameCore extends BasicGame implements CollisionListener {
 		}
 		return ByteBuffer.wrap(imageBuffer);
 	}
+
+        private class Updater extends Thread implements Runnable{
+            private GameCore gc;
+            public Updater(GameCore gc){
+                this.gc = gc;
+                this.start();
+            }
+        @Override
+            public void run(){
+                while(true){
+                    try {
+                        gc.update(gc.ctr, 10);
+                        //gc.world.step();
+                    } catch (SlickException ex) {
+                    }
+                    try {
+                        sleep(10L);
+                    } catch (InterruptedException ex) {
+                    }
+                }
+            }
+        }
 
 }

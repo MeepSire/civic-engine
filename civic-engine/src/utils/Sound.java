@@ -20,6 +20,10 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 
+/**
+ *
+ * @author Bastian Hinterleitner
+ */
 public class Sound{
 
     private Clip clip;
@@ -27,11 +31,20 @@ public class Sound{
     private InputStream in;
     private String url;
     
+    /**
+     *imports a sound
+     * @param url path to the soundfile (.wav,.mid ...)
+     */
     public Sound(String url){
         this.url = url;
         reset(1,1);
     }
 
+    /**
+     * resets the properties of the AudioPlayer playing your audiofile
+     * @param pan the Pan used to play the sound
+     * @param gain the gain used to play the sound
+     */
     public void reset(float pan, float gain){
         if(gain>6)gain=6;
         //AudioInputStream öffnen
@@ -95,26 +108,47 @@ public class Sound{
         as = new AudioStream(in);
     }*/
 
+    /**
+     *starts your sound
+     */
     public void startPlay(){
         reset(0,0);
         new Playing().start();
     }
 
+    /**
+     *starts your sound with given Pan
+     * @param pan the Pan used to play the sound
+     */
     public void startPlay(long pan){
         reset(pan,0);
         new Playing().start();
     }
 
+    /**
+     *starts your sound with given pan and gain
+     * @param pan the Pan used to play the sound
+     * @param gain the Gain used to play the sound
+     */
     public void startPlay(long pan, long gain){
         reset(pan,gain);
         new Playing().start();
     }
 
+    /**
+     *starts your sound with a given distance to an object
+     * @param distance int between 0 (loud) and ~300 (silent)
+     */
     public void startPlay(int distance){
         reset(0,6f-distance);
         new Playing().start();
     }
 
+    /**
+     *starts your sound with Pand and Gain dependant on 2 points
+     * @param listener the Point of your listener
+     * @param sound the Point at which the sound will be
+     */
     public void startPlay(Point listener,Point sound){
         int distance = (int) listener.distance(sound);
         int pos_1 = sound.x-listener.x-100;
@@ -131,6 +165,10 @@ public class Sound{
         new Playing().start();
     }
 
+    /**
+     *stops your sound
+     * @throws IOException
+     */
     public void stopPlay() throws IOException{
         clip.stop();
     }
